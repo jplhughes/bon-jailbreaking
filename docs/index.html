@@ -263,6 +263,7 @@
             });
 
             var behaviors = [...new Set(csvData.map(entry => entry.behavior_id).filter(behavior => behavior))];
+            behaviors.sort();
             behaviors.forEach(behavior => {
               $('#behavior-filter').append(`<option value="${behavior}">${behavior}</option>`);
             });
