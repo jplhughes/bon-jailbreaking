@@ -120,10 +120,10 @@ $(document).ready(function() {
           // Common response section
           html += `
             <p><strong>Model Response:</strong></p>
-            <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto;">
+            <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px;">
               <p>${entry.response.replace(/\n/g, '<br>').split(' ').slice(0,50).join(' ')} [TRUNCATED]</p>
             </div>
-            <p style="font-size: 0.9em; color: #888;">Note: Responses are limited to 200 tokens.</p>`;
+            <p style="font-size: 0.9em; color: #888;">Note: responses are limited to 50 words to show evidence of jailbroken behavior without revealing all harmful content.</p>`;
 
           // Audio-specific speech output
           if (dataset === 'audio' && entry.speech_out_file) {

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Attacking Audio Language Models with Best-of-N Jailbreaking">
+  <meta name="description" content="Best-of-N Jailbreaking">
 
   <title>Best-of-N Jailbreaking</title>
 
@@ -41,7 +41,7 @@
     <header class="row">
       <h2 class="col-md-12 text-center">
         <b>
-          <font size="+6">Attacking Audio Language Models with<br>Best-of-N Jailbreaking</font>
+          <font size="+6">Best-of-N Jailbreaking</font>
         </b>
       </h2>
     </header>
@@ -125,13 +125,14 @@
     <!-- Figure Caption -->
     <section class="col-md-8 col-md-offset-2" style="color: rgb(83, 83, 83); margin-top: 10px;">
       <p>
-        <strong>Overview of BoN jailbreaking, the performance across three input modalities and its scaling behavior.</strong> <strong>(top)</strong> BoN jailbreaking is run on each request by applying randomly sampled augmentations, processing the transformed request with the LLM, and grading the response for harmfulness. <strong>(a)</strong> ASR of BoN jailbreaking on the different LLMs as a function of the number of augmented sample attacks ($N$), with error bars produced via bootstrapping. Across all LLMs, text BoN achieves at least a 52\% ASR after 10,000 sampled attacks, highlighting the effectiveness of BoN jailbreaking. <strong>(b, c)</strong> BoN seamlessly extends to vision and audio inputs by using modality-specific augmentations. <strong>(d)</strong> We show the text modality scaling behavior of the negative log ASR with respect to $N$ for Claude 3.5 Sonnet, suggesting power-law-like behavior.
+        <strong>Overview of BoN jailbreaking, the performance across three input modalities and its scaling behavior.</strong> <strong>(top)</strong> BoN jailbreaking is run on each request by applying randomly sampled augmentations, processing the transformed request with the LLM, and grading the response for harmfulness. <strong>(a)</strong> ASR of BoN jailbreaking on the different LLMs as a function of the number of augmented sample attacks (N), with error bars produced via bootstrapping. Across all LLMs, text BoN achieves at least a 52% ASR after 10,000 sampled attacks, highlighting the effectiveness of BoN jailbreaking. <strong>(b, c)</strong> BoN seamlessly extends to vision and audio inputs by using modality-specific augmentations. <strong>(d)</strong> We show the text modality scaling behavior of the negative log ASR with respect to N for Claude 3.5 Sonnet, suggesting power-law-like behavior.
       </p>
     </section>
 
     <!-- Examples Widget -->
     <section id="widget-container" class="col-md-8 col-md-offset-2" style="padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;">
       <h3 class="text-center" style="margin-bottom: 20px; font-weight: 600;">Example Jailbreaks</h3>
+      <p class="text-center" style="color: red; margin-bottom: 20px;">WARNING: EXAMPLES CONTAIN HARMFUL CONTENT</p>
       
       <!-- Modality Tabs -->
       <ul class="nav nav-tabs nav-justified" style="margin-bottom: 20px;">
@@ -154,22 +155,16 @@
         </select>
       </div>
 
-      <!-- Entries Display -->
-      <div id="entries-container" style="margin-top: 20px;"></div>
-
-      <!-- Navigation Controls -->
+      <!-- Entry Navigation -->
       <div class="text-center" style="margin-top: 20px;">
         <button id="prev-entry" class="btn btn-outline-primary" style="margin-right: 10px;">Previous</button>
         <button id="next-entry" class="btn btn-outline-primary" style="margin-right: 10px;">Next</button>
         <label for="entry-seek" style="font-weight: 500; margin-right: 10px;">Go to entry:</label>
         <input type="number" id="entry-seek" class="form-control" style="display: inline-block; width: auto; margin-right: 10px;" min="1">
         <button id="seek-entry" class="btn btn-outline-primary">Go</button>
+        <p id="entry-info" style="font-weight: 500; margin-left: 20px; display: inline-block;"></p>
       </div>
-
-      <!-- Entry Info -->
-      <div class="text-center" style="margin-top: 20px;">
-        <p id="entry-info" style="font-weight: 500;"></p>
-      </div>
+      <div id="entries-container" style="margin-top: 20px;"></div>
     </section>
 
     <!-- Citation -->
