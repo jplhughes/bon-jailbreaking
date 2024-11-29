@@ -212,111 +212,110 @@
 
               function displayEntry(entry, filteredLength) {
                 $('#entries-container').empty();
+                
+                // Common header
+                let html = `
+                  <div class="entry">
+                    <h4>Model: ${entry.model}</h4>
+                    <p><strong>Request:</strong> ${entry.direct_request}</p>`;
+
+                // Dataset specific content
                 if (dataset === 'text') {
-                  $('#entries-container').append(`
-                    <div class="entry">
-                      <h4>Model: ${entry.model}</h4>
-                      <p><strong>Request:</strong> ${entry.direct_request}</p>
-                      <p><strong>Augmented Request:</strong> ${entry.augmented_file}</p>
-                      <p><strong>Model Response:</strong></p>
-                      <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto;">
-                        <p>${entry.response.replace(/\n/g, '<br>')}</p>
-                      </div>
-                      <p style="font-size: 0.9em; color: #888;">Note: Responses are limited to 200 tokens.</p>
-                    </div>
-                  `);
+                  html += `
+                    <p><strong>Augmented Request:</strong> ${entry.augmented_file}</p>`;
                 } else if (dataset === 'audio') {
-                  $('#entries-container').append(`
-                    <div class="entry">
-                      <h4>Model: ${entry.model}</h4>
-                      <p><strong>Request:</strong> ${entry.direct_request}</p>
-                      <p><strong>Sampled augmentation values:</strong></p>
-                      <div class="row">
-                        <div class="col-md-4" style="padding-left: 40px;">
-                          <p>🏃🏽‍♀️ Speed: ${parseFloat(entry.speed).toFixed(2)}x</p>
-                        </div>
-                        <div class="col-md-4" style="padding-left: 40px;">
-                          <p>⚡ Pitch: ${(parseFloat(entry.pitch) / 100).toFixed(2)} semitones</p>
-                        </div>
-                        <div class="col-md-4" style="padding-left: 40px;">
-                          <p>🗣️ Speech: ${parseFloat(entry.speech).toFixed(2)}dB</p>
-                        </div>
-                        <div class="col-md-4" style="padding-left: 40px;">
-                          <p>🚗 Noise: ${parseFloat(entry.noise).toFixed(2)}dB</p>
-                        </div>
-                        <div class="col-md-4" style="padding-left: 40px;">
-                          <p>📢 Volume: ${parseFloat(entry.volume).toFixed(3)}x</p>
-                        </div>
-                        <div class="col-md-4" style="padding-left: 40px;">
-                          <p>🎹 Music: ${parseFloat(entry.music).toFixed(2)}dB</p>
-                        </div>
+                  html += `
+                    <p><strong>Sampled augmentation values:</strong></p>
+                    <div class="row">
+                      <div class="col-md-4" style="padding-left: 40px;">
+                        <p>🏃🏽‍♀️ Speed: ${parseFloat(entry.speed).toFixed(2)}x</p>
                       </div>
-                      <div class="row">
-                        <div class="col-md-6">
-                          <p><strong>Vocalized Request:</strong></p>
-                          <audio controls>
-                            <source src="assets/${entry.audio_file}" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                          </audio>
-                        </div>
-                        <div class="col-md-6">
-                          <p><strong>Augmented Request:</strong></p>
-                          <audio controls>
-                            <source src="assets/${entry.augmented_file}" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                          </audio>
-                        </div>
+                      <div class="col-md-4" style="padding-left: 40px;">
+                        <p>⚡ Pitch: ${(parseFloat(entry.pitch) / 100).toFixed(2)} semitones</p>
                       </div>
-                      <p><strong>Model Response:</strong></p>
-                      <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto;">
-                        <p>${entry.response.replace(/\n/g, '<br>')}</p>
+                      <div class="col-md-4" style="padding-left: 40px;">
+                        <p>🗣️ Speech: ${parseFloat(entry.speech).toFixed(2)}dB</p>
                       </div>
-                      <p style="font-size: 0.9em; color: #888;">Note: Responses are limited to 200 tokens.</p>
-                      ${entry.speech_out_file ? `<p><strong>Speech Output File:</strong></p><audio controls><source src="assets/${entry.speech_out_file}" type="audio/mpeg">Your browser does not support the audio element.</audio>` : ''}
+                      <div class="col-md-4" style="padding-left: 40px;">
+                        <p>🚗 Noise: ${parseFloat(entry.noise).toFixed(2)}dB</p>
+                      </div>
+                      <div class="col-md-4" style="padding-left: 40px;">
+                        <p>📢 Volume: ${parseFloat(entry.volume).toFixed(3)}x</p>
+                      </div>
+                      <div class="col-md-4" style="padding-left: 40px;">
+                        <p>🎹 Music: ${parseFloat(entry.music).toFixed(2)}dB</p>
+                      </div>
                     </div>
-                  `);
+                    <div class="row">
+                      <div class="col-md-6">
+                        <p><strong>Vocalized Request:</strong></p>
+                        <audio controls>
+                          <source src="assets/${entry.audio_file}" type="audio/mpeg">
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
+                      <div class="col-md-6">
+                        <p><strong>Augmented Request:</strong></p>
+                        <audio controls>
+                          <source src="assets/${entry.augmented_file}" type="audio/mpeg">
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
+                    </div>`;
                 } else if (dataset === 'vision') {
-                  $('#entries-container').append(`
-                    <div class="entry">
-                      <h4>Model: ${entry.model}</h4>
-                      <p><strong>Request:</strong> ${entry.direct_request}</p>
-                      <p><strong>Sampled augmentation values:</strong></p>
-                      <div class="row">
-                        <div class="col-md-4" style="padding-left: 40px;">
-                          <p>📍 Position: ${entry.position}</p>
-                        </div>
-                        <div class="col-md-4" style="padding-left: 40px;">
-                          <p>🔤 Font: ${entry.font}</p>
-                        </div>
-                        <div class="col-md-4" style="padding-left: 40px;">
-                          <p>📏 Font Scale: ${parseFloat(entry.font_scale).toFixed(2)}</p>
-                        </div>
-                        <div class="col-md-4" style="padding-left: 40px;">
-                          <p>🎨 Color: ${entry.color}</p>
-                        </div>
-                        <div class="col-md-4" style="padding-left: 40px;">
-                          <p>✏️ Thickness: ${entry.thickness}</p>
-                        </div>
-                        <div class="col-md-4" style="padding-left: 40px;">
-                          <p>🖼️ Dimensions: <span id="dimensions-${entry.augmented_file}">Loading...</span></p>
-                        </div>
+                  html += `
+                    <p><strong>Sampled augmentation values:</strong></p>
+                    <div class="row">
+                      <div class="col-md-4" style="padding-left: 40px;">
+                        <p>📍 Position: ${entry.position}</p>
                       </div>
-                      <p><strong>Augmented Image:</strong></p>
-                      <img src="assets/${entry.augmented_file}" 
-                           style="max-width: 100%; height: auto;"
-                           onload="(function(img) {
-                             document.getElementById('dimensions-' + '${entry.augmented_file}').textContent = 
-                               '(' + img.naturalWidth + ', ' + img.naturalHeight + ')';
-                           })(this)">
-                      <div style="margin-top: 20px;">
-                        <p><strong>Model Response:</strong></p>
+                      <div class="col-md-4" style="padding-left: 40px;">
+                        <p>🔤 Font: ${entry.font}</p>
                       </div>
-                      <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto;">
-                        <p>${entry.response.replace(/\n/g, '<br>')}</p>
+                      <div class="col-md-4" style="padding-left: 40px;">
+                        <p>📏 Font Scale: ${parseFloat(entry.font_scale).toFixed(2)}</p>
+                      </div>
+                      <div class="col-md-4" style="padding-left: 40px;">
+                        <p>🎨 Color: ${entry.color}</p>
+                      </div>
+                      <div class="col-md-4" style="padding-left: 40px;">
+                        <p>✏️ Thickness: ${entry.thickness}</p>
+                      </div>
+                      <div class="col-md-4" style="padding-left: 40px;">
+                        <p>🖼️ Dimensions: <span id="dimensions-${entry.augmented_file}">Loading...</span></p>
                       </div>
                     </div>
-                  `);
+                    <p><strong>Augmented Image:</strong></p>
+                    <img src="assets/${entry.augmented_file}" 
+                         style="max-width: 100%; height: auto;"
+                         onload="(function(img) {
+                           document.getElementById('dimensions-' + '${entry.augmented_file}').textContent = 
+                             '(' + img.naturalWidth + ', ' + img.naturalHeight + ')';
+                         })(this)">
+                    <div style="margin-top: 20px;">`;
                 }
+
+                // Common response section
+                html += `
+                  <p><strong>Model Response:</strong></p>
+                  <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto;">
+                    <p>${entry.response.replace(/\n/g, '<br>')}</p>
+                  </div>
+                  <p style="font-size: 0.9em; color: #888;">Note: Responses are limited to 200 tokens.</p>`;
+
+                // Audio-specific speech output
+                if (dataset === 'audio' && entry.speech_out_file) {
+                  html += `
+                    <p><strong>Speech Output File:</strong></p>
+                    <audio controls>
+                      <source src="assets/${entry.speech_out_file}" type="audio/mpeg">
+                      Your browser does not support the audio element.
+                    </audio>`;
+                }
+
+                html += `</div>`;
+
+                $('#entries-container').append(html);
                 $('#entry-info').text(`Entry ${currentIndex + 1} of ${filteredLength}`);
                 $('#entry-seek').attr('max', filteredLength);
               }
