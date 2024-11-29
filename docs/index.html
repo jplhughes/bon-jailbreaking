@@ -155,6 +155,13 @@
     <!-- create a widget that loads in the contents of assets/bon_jailbreaks.csv -->
     <div id="widget-container" class="col-md-8 col-md-offset-2" style="padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;">
       <h3 class="text-center" style="margin-bottom: 20px; font-weight: 600;">Example Jailbreaks</h3>
+      <!-- Added modality tabs -->
+      <ul class="nav nav-tabs nav-justified" style="margin-bottom: 20px;">
+        <li class="active"><a href="#text" data-toggle="tab">Text</a></li>
+        <li><a href="#vision" data-toggle="tab">Vision</a></li>
+        <li><a href="#audio" data-toggle="tab">Audio</a></li>
+      </ul>
+
       <div class="form-group" style="display: inline-block; width: 48%; margin-right: 2%;">
         <label for="model-filter" style="font-weight: 500;">Filter by model:</label>
         <select id="model-filter" class="form-control" style="width: 100%;">
@@ -183,125 +190,192 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
       $(document).ready(function() {
-        $.ajax({
-          type: "GET",
-          url: "assets/data/audio_jailbreaks.csv",
-          dataType: "text",
-          success: function(data) {
-            var csvData = Papa.parse(data, {header: true}).data;
-            var currentIndex = 0;
+        var currentDataset = 'text';
+        var datasetUrls = {
+          'text': 'assets/data/text_jailbreaks.csv',
+          'vision': 'assets/data/vision_jailbreaks.csv', 
+          'audio': 'assets/data/audio_jailbreaks.csv'
+        };
 
-            function displayEntry(entry, filteredLength) {
-              $('#entries-container').empty();
-              $('#entries-container').append(`
-                <div class="entry">
-                  <h4>Model: ${entry.model}</h4>
-                  <p><strong>Request:</strong> ${entry.direct_request}</p>
-                  <p><strong>Sampled augmentation values:</strong></p>
-                  <div class="row">
-                    <div class="col-md-4" style="padding-left: 40px;">
-                      <p>🏃🏽‍♀️ Speed: ${parseFloat(entry.speed).toFixed(2)}x</p>
-                    </div>
-                    <div class="col-md-4" style="padding-left: 40px;">
-                      <p>⚡ Pitch: ${(parseFloat(entry.pitch) / 100).toFixed(2)} semitones</p>
-                    </div>
-                    <div class="col-md-4" style="padding-left: 40px;">
-                      <p>🗣️ Speech: ${parseFloat(entry.speech).toFixed(2)}dB</p>
-                    </div>
-                    <div class="col-md-4" style="padding-left: 40px;">
-                      <p>🚗 Noise: ${parseFloat(entry.noise).toFixed(2)}dB</p>
-                    </div>
-                    <div class="col-md-4" style="padding-left: 40px;">
-                      <p>📢 Volume: ${parseFloat(entry.volume).toFixed(3)}x</p>
-                    </div>
-                    <div class="col-md-4" style="padding-left: 40px;">
-                      <p>🎹 Music: ${parseFloat(entry.music).toFixed(2)}dB</p>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <p><strong>Vocalized Request:</strong></p>
-                      <audio controls>
-                        <source src="assets/${entry.audio_file}" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                      </audio>
-                    </div>
-                    <div class="col-md-6">
-                      <p><strong>Augmented Request:</strong></p>
-                      <audio controls>
-                        <source src="assets/${entry.augmented_file}" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                      </audio>
-                    </div>
-                  </div>
-                  <p><strong>Model Response:</strong></p>
-                  <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto;">
-                    <p>${entry.response.replace(/\n/g, '<br>')}</p>
-                  </div>
-                  <p style="font-size: 0.9em; color: #888;">Note: Responses are limited to 200 tokens.</p>
-                  ${entry.speech_out_file ? `<p><strong>Speech Output File:</strong></p><audio controls><source src="assets/${entry.speech_out_file}" type="audio/mpeg">Your browser does not support the audio element.</audio>` : ''}
-                </div>
-              `);
-              $('#entry-info').text(`Entry ${currentIndex + 1} of ${filteredLength}`);
-              $('#entry-seek').attr('max', filteredLength);
-            }
+        function loadData(dataset) {
+          $.ajax({
+            type: "GET",
+            url: datasetUrls[dataset],
+            dataType: "text",
+            success: function(data) {
+              var csvData = Papa.parse(data, {header: true}).data;
+              var currentIndex = 0;
 
-            function updateEntry() {
-              var selectedModel = $('#model-filter').val();
-              var selectedBehavior = $('#behavior-filter').val();
-              var filteredEntries = csvData.filter(entry => {
-                return (!selectedModel || entry.model === selectedModel) && (!selectedBehavior || entry.behavior_id === selectedBehavior);
-              });
-              if (filteredEntries.length > 0) {
-                displayEntry(filteredEntries[currentIndex % filteredEntries.length], filteredEntries.length);
-              } else {
+              function displayEntry(entry, filteredLength) {
                 $('#entries-container').empty();
-                $('#entry-info').text('No entries found');
+                if (dataset === 'text') {
+                  $('#entries-container').append(`
+                    <div class="entry">
+                      <h4>Model: ${entry.model}</h4>
+                      <p><strong>Request:</strong> ${entry.direct_request}</p>
+                      <p><strong>Augmented Request:</strong> ${entry.augmented_file}</p>
+                      <p><strong>Model Response:</strong></p>
+                      <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto;">
+                        <p>${entry.response.replace(/\n/g, '<br>')}</p>
+                      </div>
+                      <p style="font-size: 0.9em; color: #888;">Note: Responses are limited to 200 tokens.</p>
+                    </div>
+                  `);
+                } else if (dataset === 'audio') {
+                  $('#entries-container').append(`
+                    <div class="entry">
+                      <h4>Model: ${entry.model}</h4>
+                      <p><strong>Request:</strong> ${entry.direct_request}</p>
+                      <p><strong>Sampled augmentation values:</strong></p>
+                      <div class="row">
+                        <div class="col-md-4" style="padding-left: 40px;">
+                          <p>🏃🏽‍♀️ Speed: ${parseFloat(entry.speed).toFixed(2)}x</p>
+                        </div>
+                        <div class="col-md-4" style="padding-left: 40px;">
+                          <p>⚡ Pitch: ${(parseFloat(entry.pitch) / 100).toFixed(2)} semitones</p>
+                        </div>
+                        <div class="col-md-4" style="padding-left: 40px;">
+                          <p>🗣️ Speech: ${parseFloat(entry.speech).toFixed(2)}dB</p>
+                        </div>
+                        <div class="col-md-4" style="padding-left: 40px;">
+                          <p>🚗 Noise: ${parseFloat(entry.noise).toFixed(2)}dB</p>
+                        </div>
+                        <div class="col-md-4" style="padding-left: 40px;">
+                          <p>📢 Volume: ${parseFloat(entry.volume).toFixed(3)}x</p>
+                        </div>
+                        <div class="col-md-4" style="padding-left: 40px;">
+                          <p>🎹 Music: ${parseFloat(entry.music).toFixed(2)}dB</p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <p><strong>Vocalized Request:</strong></p>
+                          <audio controls>
+                            <source src="assets/${entry.audio_file}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                          </audio>
+                        </div>
+                        <div class="col-md-6">
+                          <p><strong>Augmented Request:</strong></p>
+                          <audio controls>
+                            <source src="assets/${entry.augmented_file}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                          </audio>
+                        </div>
+                      </div>
+                      <p><strong>Model Response:</strong></p>
+                      <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto;">
+                        <p>${entry.response.replace(/\n/g, '<br>')}</p>
+                      </div>
+                      <p style="font-size: 0.9em; color: #888;">Note: Responses are limited to 200 tokens.</p>
+                      ${entry.speech_out_file ? `<p><strong>Speech Output File:</strong></p><audio controls><source src="assets/${entry.speech_out_file}" type="audio/mpeg">Your browser does not support the audio element.</audio>` : ''}
+                    </div>
+                  `);
+                } else if (dataset === 'vision') {
+                  $('#entries-container').append(`
+                    <div class="entry">
+                      <h4>Model: ${entry.model}</h4>
+                      <p><strong>Request:</strong> ${entry.direct_request}</p>
+                      <p><strong>Sampled augmentation values:</strong></p>
+                      <div class="row">
+                        <div class="col-md-4" style="padding-left: 40px;">
+                          <p>📍 Position: ${entry.position}</p>
+                        </div>
+                        <div class="col-md-4" style="padding-left: 40px;">
+                          <p>🔤 Font: ${entry.font}</p>
+                        </div>
+                        <div class="col-md-4" style="padding-left: 40px;">
+                          <p>📏 Font Scale: ${parseFloat(entry.font_scale).toFixed(2)}</p>
+                        </div>
+                        <div class="col-md-4" style="padding-left: 40px;">
+                          <p>🎨 Color: ${entry.color}</p>
+                        </div>
+                        <div class="col-md-4" style="padding-left: 40px;">
+                          <p>✏️ Thickness: ${entry.thickness}</p>
+                        </div>
+                      </div>
+                      <p><strong>Augmented Image:</strong></p>
+                      <img src="assets/${entry.augmented_file}" style="max-width: 100%; height: auto;">
+                      <div style="margin-top: 20px;">
+                        <p><strong>Model Response:</strong></p>
+                      </div>
+                      <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto;">
+                        <p>${entry.response.replace(/\n/g, '<br>')}</p>
+                      </div>
+                    </div>
+                  `);
+                }
+                $('#entry-info').text(`Entry ${currentIndex + 1} of ${filteredLength}`);
+                $('#entry-seek').attr('max', filteredLength);
               }
-            }
 
-            var models = [...new Set(csvData.map(entry => entry.model).filter(model => model))];
-            models.forEach(model => {
-              $('#model-filter').append(`<option value="${model}">${model}</option>`);
-            });
+              function updateEntry() {
+                var selectedModel = $('#model-filter').val();
+                var selectedBehavior = $('#behavior-filter').val();
+                var filteredEntries = csvData.filter(entry => {
+                  return (!selectedModel || entry.model === selectedModel) && (!selectedBehavior || entry.behavior_id === selectedBehavior);
+                });
+                if (filteredEntries.length > 0) {
+                  displayEntry(filteredEntries[currentIndex % filteredEntries.length], filteredEntries.length);
+                } else {
+                  $('#entries-container').empty();
+                  $('#entry-info').text('No entries found');
+                }
+              }
 
-            var behaviors = [...new Set(csvData.map(entry => entry.behavior_id).filter(behavior => behavior))];
-            behaviors.sort();
-            behaviors.forEach(behavior => {
-              $('#behavior-filter').append(`<option value="${behavior}">${behavior}</option>`);
-            });
+              var models = [...new Set(csvData.map(entry => entry.model).filter(model => model))];
+              models.forEach(model => {
+                $('#model-filter').append(`<option value="${model}">${model}</option>`);
+              });
 
-            $('#model-filter').change(function() {
-              currentIndex = 0;
-              updateEntry();
-            });
+              var behaviors = [...new Set(csvData.map(entry => entry.behavior_id).filter(behavior => behavior))];
+              behaviors.sort();
+              behaviors.forEach(behavior => {
+                $('#behavior-filter').append(`<option value="${behavior}">${behavior}</option>`);
+              });
 
-            $('#behavior-filter').change(function() {
-              currentIndex = 0;
-              updateEntry();
-            });
-
-            $('#next-entry').click(function() {
-              currentIndex++;
-              updateEntry();
-            });
-
-            $('#prev-entry').click(function() {
-              currentIndex = (currentIndex - 1 + csvData.length) % csvData.length;
-              updateEntry();
-            });
-
-            $('#seek-entry').click(function() {
-              var seekIndex = parseInt($('#entry-seek').val(), 10) - 1;
-              if (seekIndex >= 0 && seekIndex < csvData.length) {
-                currentIndex = seekIndex;
+              $('#model-filter').change(function() {
+                currentIndex = 0;
                 updateEntry();
-              }
-            });
+              });
 
-            updateEntry();
-          }
+              $('#behavior-filter').change(function() {
+                currentIndex = 0;
+                updateEntry();
+              });
+
+              $('#next-entry').click(function() {
+                currentIndex++;
+                updateEntry();
+              });
+
+              $('#prev-entry').click(function() {
+                currentIndex = (currentIndex - 1 + csvData.length) % csvData.length;
+                updateEntry();
+              });
+
+              $('#seek-entry').click(function() {
+                var seekIndex = parseInt($('#entry-seek').val(), 10) - 1;
+                if (seekIndex >= 0 && seekIndex < csvData.length) {
+                  currentIndex = seekIndex;
+                  updateEntry();
+                }
+              });
+
+              updateEntry();
+            }
+          });
+        }
+
+        // Add tab click handlers
+        $('.nav-tabs a').click(function(e) {
+          e.preventDefault();
+          $(this).tab('show');
+          currentDataset = $(this).attr('href').substring(1); // Remove the # from href
+          loadData(currentDataset);
         });
+
+        loadData(currentDataset);
       });
     </script>
 
