@@ -293,9 +293,17 @@
                         <div class="col-md-4" style="padding-left: 40px;">
                           <p>✏️ Thickness: ${entry.thickness}</p>
                         </div>
+                        <div class="col-md-4" style="padding-left: 40px;">
+                          <p>🖼️ Dimensions: <span id="dimensions-${entry.augmented_file}">Loading...</span></p>
+                        </div>
                       </div>
                       <p><strong>Augmented Image:</strong></p>
-                      <img src="assets/${entry.augmented_file}" style="max-width: 100%; height: auto;">
+                      <img src="assets/${entry.augmented_file}" 
+                           style="max-width: 100%; height: auto;"
+                           onload="(function(img) {
+                             document.getElementById('dimensions-' + '${entry.augmented_file}').textContent = 
+                               '(' + img.naturalWidth + ', ' + img.naturalHeight + ')';
+                           })(this)">
                       <div style="margin-top: 20px;">
                         <p><strong>Model Response:</strong></p>
                       </div>
