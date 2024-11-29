@@ -121,7 +121,7 @@ $(document).ready(function() {
           html += `
             <p><strong>Model Response:</strong></p>
             <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto;">
-              <p>${entry.response.replace(/\n/g, '<br>')}</p>
+              <p>${entry.response.replace(/\n/g, '<br>').split(' ').slice(0,50).join(' ')} [TRUNCATED]</p>
             </div>
             <p style="font-size: 0.9em; color: #888;">Note: Responses are limited to 200 tokens.</p>`;
 
