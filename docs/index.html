@@ -1,28 +1,25 @@
-
 <!DOCTYPE html>
-<html>
-
-<head lang="en">
+<html lang="en">
+<head>
   <meta charset="UTF-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Attacking Audio Language Models with Best-of-N Jailbreaking">
 
   <title>Best-of-N Jailbreaking</title>
 
-  <meta name="description" content="Attacking Audio Language Models with Best-of-N Jailbreaking">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.css">
   <link rel="stylesheet" href="css/app.css">
 
-  <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
-
+  <!-- Scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.3/clipboard.min.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="js/app.js"></script>
 
   <style>
@@ -30,7 +27,6 @@
       position: relative;
       display: inline;
     }
-
     .imtip {
       position: absolute;
       top: 0;
@@ -41,21 +37,25 @@
 
 <body>
   <div class="container" id="main">
-    <div class="row">
+    <!-- Title -->
+    <header class="row">
       <h2 class="col-md-12 text-center">
         <b>
           <font size="+6">Attacking Audio Language Models with<br>Best-of-N Jailbreaking</font>
         </b>
-      <!-- </br>Attacking Audio Language Models with Best-of-N Jailbreaking</br> -->
       </h2>
-    </div>
-    <div class="row">
+    </header>
+
+    <!-- Authors -->
+    <section class="row">
       <div class="col-md-12 text-center">
+        <!-- First row authors -->
         <ul class="list-inline">
           <li><a href="https://www.jplhughes.com/" target="_blank" style="color: inherit;">John Hughes</a>*</li>
           <li><a href="https://www.linkedin.com/in/sara-price-310757b2/" target="_blank" style="color: inherit;">Sara Price</a>*</li>
           <li><a href="https://aengusl.github.io/aenguslynch.github.io/" target="_blank" style="color: inherit;">Aengus Lynch</a>*</li>
         </ul>
+        <!-- Second row authors -->
         <ul class="list-inline">
           <li><a href="https://rylanschaeffer.github.io/" target="_blank" style="color: inherit;">Rylan Schaeffer</a></li>
           <li><a href="https://fbarez.github.io/" target="_blank" style="color: inherit;">Fazl Barez</a></li>
@@ -63,22 +63,21 @@
           <li><a href="https://www.linkedin.com/in/henry-sleight-406811227" target="_blank" style="color: inherit;">Henry Sleight</a></li>
           <li><a href="https://people.eecs.berkeley.edu/~erjones" target="_blank" style="color: inherit;">Erik Jones</a></li>
         </ul>
+        <!-- Third row authors -->
         <ul class="list-inline">
           <li><a href="https://ethanperez.net/" target="_blank" style="color: inherit;">Ethan Perez</a></li>
           <li><a href="https://www.mrinanksharma.net/" target="_blank" style="color: inherit;">Mrinank Sharma</a></li>
         </ul>
       </div>
-    </div>
+    </section>
 
-    <div class="col-md-12 text-center">
-      <ul class="list-inline">
-        <li>
-          <img src="assets/banner.webp" style="width: 60%; height: auto;" class="img-responsive">
-        </li>
-      </ul>
-    </div>
+    <!-- Banner Image -->
+    <section class="col-md-12 text-center">
+      <img src="assets/banner.webp" style="width: 60%; height: auto;" class="img-responsive" alt="Banner image">
+    </section>
 
-    <div class="row">
+    <!-- Links -->
+    <section class="row">
       <div class="col-md-8 col-md-offset-2 text-center">
         <h3>
           <a href="https://drive.google.com/file/d/17c_DgejUgas9pXTpgoR3_18GEHc0vPPT/view?usp=sharing" target="_blank">Paper</a>
@@ -86,32 +85,14 @@
           <a href="https://github.com/McHughes288/bon_jailbreaking" target="_blank">Code</a>
           &nbsp;&nbsp;|&nbsp;&nbsp;
           <a href="#examples" onclick="document.getElementById('widget-container').scrollIntoView();">Examples</a>
-          <!-- &nbsp;&nbsp;|&nbsp;&nbsp;
-          <a href="assets/poster.pdf" target="_blank">Poster</a> -->
-          <!-- &nbsp;&nbsp;|&nbsp;&nbsp; -->
-          <!-- <a href="" target="_blank">Video</a> -->
         </h3>
       </div>
-    </div>
+    </section>
 
-    <!-- <div class="row">
-      <div class="col-md-8 col-md-offset-2 text-center">
-        <h4>
-            Also, check out this
-            <a href="https://www.lesswrong.com" target="_blank">
-              blogpost
-            </a>
-            with our high-level takeaways on
-            mechinterp!</a>
-        </h4>
-      </div>
-    </div> -->
-
-    <div class="row">
+    <!-- Abstract -->
+    <section class="row">
       <div class="col-md-8 col-md-offset-2">
-        <h3>
-          Abstract
-        </h3>
+        <h3>Abstract</h3>
         <p class="text-justify">
           We introduce Best-of-N (BoN) Jailbreaking, a simple black-box algorithm that
           jailbreaks frontier systems across modalities. BoN jailbreaking works by repeatedly
@@ -134,47 +115,49 @@
           which can be exploited by attackers across modalities.
         </p>
       </div>
-    </div>
+    </section>
 
-    
+    <!-- Overview Figure -->
+    <section class="col-md-12 text-center" style="margin-top: 20px;">
+      <img src="assets/intro_figure.png" style="width: 70%; height: auto;" class="img-responsive" alt="Overview figure">
+    </section>
 
-    <div class="col-md-12 text-center" style="margin-top: 20px;">
-      <ul class="list-inline">
-        <li>
-          <img src="assets/intro_figure.png" style="width: 70%; height: auto;" class="img-responsive">
-        </li>
-      </ul>
-    </div>
-
-    <div class="col-md-8 col-md-offset-2" style="color: rgb(83, 83, 83); margin-top: 10px;">
+    <!-- Figure Caption -->
+    <section class="col-md-8 col-md-offset-2" style="color: rgb(83, 83, 83); margin-top: 10px;">
       <p>
         <strong>Overview of BoN jailbreaking, the performance across three input modalities and its scaling behavior.</strong> <strong>(top)</strong> BoN jailbreaking is run on each request by applying randomly sampled augmentations, processing the transformed request with the LLM, and grading the response for harmfulness. <strong>(a)</strong> ASR of BoN jailbreaking on the different LLMs as a function of the number of augmented sample attacks ($N$), with error bars produced via bootstrapping. Across all LLMs, text BoN achieves at least a 52\% ASR after 10,000 sampled attacks, highlighting the effectiveness of BoN jailbreaking. <strong>(b, c)</strong> BoN seamlessly extends to vision and audio inputs by using modality-specific augmentations. <strong>(d)</strong> We show the text modality scaling behavior of the negative log ASR with respect to $N$ for Claude 3.5 Sonnet, suggesting power-law-like behavior.
       </p>
-    </div>
+    </section>
 
-    <!-- create a widget that loads in the contents of assets/bon_jailbreaks.csv -->
-    <div id="widget-container" class="col-md-8 col-md-offset-2" style="padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;">
+    <!-- Examples Widget -->
+    <section id="widget-container" class="col-md-8 col-md-offset-2" style="padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;">
       <h3 class="text-center" style="margin-bottom: 20px; font-weight: 600;">Example Jailbreaks</h3>
-      <!-- Added modality tabs -->
+      
+      <!-- Modality Tabs -->
       <ul class="nav nav-tabs nav-justified" style="margin-bottom: 20px;">
         <li class="active"><a href="#text" data-toggle="tab">Text</a></li>
         <li><a href="#vision" data-toggle="tab">Vision</a></li>
         <li><a href="#audio" data-toggle="tab">Audio</a></li>
       </ul>
 
+      <!-- Filters -->
       <div class="form-group" style="display: inline-block; width: 48%; margin-right: 2%;">
         <label for="model-filter" style="font-weight: 500;">Filter by model:</label>
-        <select id="model-filter" class="form-control" style="width: 100%;">
+        <select id="model-filter" class="form-control">
           <option value="">All Models</option>
         </select>
       </div>
       <div class="form-group" style="display: inline-block; width: 48%;">
         <label for="behavior-filter" style="font-weight: 500;">Filter by behavior_id:</label>
-        <select id="behavior-filter" class="form-control" style="width: 100%;">
+        <select id="behavior-filter" class="form-control">
           <option value="">All Behaviors</option>
         </select>
       </div>
+
+      <!-- Entries Display -->
       <div id="entries-container" style="margin-top: 20px;"></div>
+
+      <!-- Navigation Controls -->
       <div class="text-center" style="margin-top: 20px;">
         <button id="prev-entry" class="btn btn-outline-primary" style="margin-right: 10px;">Previous</button>
         <button id="next-entry" class="btn btn-outline-primary" style="margin-right: 10px;">Next</button>
@@ -182,236 +165,17 @@
         <input type="number" id="entry-seek" class="form-control" style="display: inline-block; width: auto; margin-right: 10px;" min="1">
         <button id="seek-entry" class="btn btn-outline-primary">Go</button>
       </div>
+
+      <!-- Entry Info -->
       <div class="text-center" style="margin-top: 20px;">
         <p id="entry-info" style="font-weight: 500;"></p>
       </div>
-    </div>
+    </section>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script>
-      $(document).ready(function() {
-        var currentDataset = 'text';
-        var datasetUrls = {
-          'text': 'assets/data/text_jailbreaks.csv',
-          'vision': 'assets/data/vision_jailbreaks.csv', 
-          'audio': 'assets/data/audio_jailbreaks.csv'
-        };
-
-        function loadData(dataset) {
-          // Clear existing options first
-          $('#model-filter').html('<option value="">All Models</option>');
-          $('#behavior-filter').html('<option value="">All Behaviors</option>');
-          
-          $.ajax({
-            type: "GET",
-            url: datasetUrls[dataset],
-            dataType: "text",
-            success: function(data) {
-              var csvData = Papa.parse(data, {header: true}).data;
-              var currentIndex = 0;
-
-              function displayEntry(entry, filteredLength) {
-                $('#entries-container').empty();
-                
-                // Common header
-                let html = `
-                  <div class="entry">
-                    <h4>Model: ${entry.model}</h4>
-                    <p><strong>Request:</strong> ${entry.direct_request}</p>`;
-
-                // Dataset specific content
-                if (dataset === 'text') {
-                  html += `
-                    <p><strong>Augmented Request:</strong> ${entry.augmented_file}</p>`;
-                } else if (dataset === 'audio') {
-                  html += `
-                    <p><strong>Sampled augmentation values:</strong></p>
-                    <div class="row">
-                      <div class="col-md-4" style="padding-left: 40px;">
-                        <p>🏃🏽‍♀️ Speed: ${parseFloat(entry.speed).toFixed(2)}x</p>
-                      </div>
-                      <div class="col-md-4" style="padding-left: 40px;">
-                        <p>⚡ Pitch: ${(parseFloat(entry.pitch) / 100).toFixed(2)} semitones</p>
-                      </div>
-                      <div class="col-md-4" style="padding-left: 40px;">
-                        <p>🗣️ Speech: ${parseFloat(entry.speech).toFixed(2)}dB</p>
-                      </div>
-                      <div class="col-md-4" style="padding-left: 40px;">
-                        <p>🚗 Noise: ${parseFloat(entry.noise).toFixed(2)}dB</p>
-                      </div>
-                      <div class="col-md-4" style="padding-left: 40px;">
-                        <p>📢 Volume: ${parseFloat(entry.volume).toFixed(3)}x</p>
-                      </div>
-                      <div class="col-md-4" style="padding-left: 40px;">
-                        <p>🎹 Music: ${parseFloat(entry.music).toFixed(2)}dB</p>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <p><strong>Vocalized Request:</strong></p>
-                        <audio controls>
-                          <source src="assets/${entry.audio_file}" type="audio/mpeg">
-                          Your browser does not support the audio element.
-                        </audio>
-                      </div>
-                      <div class="col-md-6">
-                        <p><strong>Augmented Request:</strong></p>
-                        <audio controls>
-                          <source src="assets/${entry.augmented_file}" type="audio/mpeg">
-                          Your browser does not support the audio element.
-                        </audio>
-                      </div>
-                    </div>`;
-                } else if (dataset === 'vision') {
-                  html += `
-                    <p><strong>Sampled augmentation values:</strong></p>
-                    <div class="row">
-                      <div class="col-md-4" style="padding-left: 40px;">
-                        <p>📍 Position: ${entry.position}</p>
-                      </div>
-                      <div class="col-md-4" style="padding-left: 40px;">
-                        <p>🔤 Font: ${entry.font}</p>
-                      </div>
-                      <div class="col-md-4" style="padding-left: 40px;">
-                        <p>📏 Font Scale: ${parseFloat(entry.font_scale).toFixed(2)}</p>
-                      </div>
-                      <div class="col-md-4" style="padding-left: 40px;">
-                        <p>🎨 Color: ${entry.color}</p>
-                      </div>
-                      <div class="col-md-4" style="padding-left: 40px;">
-                        <p>✏️ Thickness: ${entry.thickness}</p>
-                      </div>
-                      <div class="col-md-4" style="padding-left: 40px;">
-                        <p>🖼️ Dimensions: <span id="dimensions-${entry.augmented_file}">Loading...</span></p>
-                      </div>
-                    </div>
-                    <p><strong>Augmented Image:</strong></p>
-                    <img src="assets/${entry.augmented_file}" 
-                         style="max-width: 100%; height: auto;"
-                         onload="(function(img) {
-                           document.getElementById('dimensions-' + '${entry.augmented_file}').textContent = 
-                             '(' + img.naturalWidth + ', ' + img.naturalHeight + ')';
-                         })(this)">
-                    <div style="margin-top: 20px;">`;
-                }
-
-                // Common response section
-                html += `
-                  <p><strong>Model Response:</strong></p>
-                  <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto;">
-                    <p>${entry.response.replace(/\n/g, '<br>')}</p>
-                  </div>
-                  <p style="font-size: 0.9em; color: #888;">Note: Responses are limited to 200 tokens.</p>`;
-
-                // Audio-specific speech output
-                if (dataset === 'audio' && entry.speech_out_file) {
-                  html += `
-                    <p><strong>Speech Output File:</strong></p>
-                    <audio controls>
-                      <source src="assets/${entry.speech_out_file}" type="audio/mpeg">
-                      Your browser does not support the audio element.
-                    </audio>`;
-                }
-
-                html += `</div>`;
-
-                $('#entries-container').append(html);
-                $('#entry-info').text(`Entry ${currentIndex + 1} of ${filteredLength}`);
-                $('#entry-seek').attr('max', filteredLength);
-              }
-
-              function updateEntry() {
-                var selectedModel = $('#model-filter').val();
-                var selectedBehavior = $('#behavior-filter').val();
-                var filteredEntries = csvData.filter(entry => {
-                  return (!selectedModel || entry.model === selectedModel) && (!selectedBehavior || entry.behavior_id === selectedBehavior);
-                });
-                if (filteredEntries.length > 0) {
-                  displayEntry(filteredEntries[currentIndex], filteredEntries.length);
-                  
-                  // Enable/disable navigation buttons based on current index
-                  $('#prev-entry').prop('disabled', currentIndex === 0);
-                  $('#next-entry').prop('disabled', currentIndex >= filteredEntries.length - 1);
-                } else {
-                  $('#entries-container').empty();
-                  $('#entry-info').text('No entries found');
-                  $('#prev-entry').prop('disabled', true);
-                  $('#next-entry').prop('disabled', true);
-                }
-              }
-
-              // Populate model filter for current dataset only
-              var models = [...new Set(csvData.map(entry => entry.model).filter(model => model))];
-              models.forEach(model => {
-                $('#model-filter').append(`<option value="${model}">${model}</option>`);
-              });
-
-              // Populate behavior filter for current dataset only
-              var behaviors = [...new Set(csvData.map(entry => entry.behavior_id).filter(behavior => behavior))];
-              behaviors.sort();
-              behaviors.forEach(behavior => {
-                $('#behavior-filter').append(`<option value="${behavior}">${behavior}</option>`);
-              });
-
-              $('#model-filter').change(function() {
-                currentIndex = 0;
-                updateEntry();
-              });
-
-              $('#behavior-filter').change(function() {
-                currentIndex = 0;
-                updateEntry();
-              });
-
-              $('#next-entry').click(function() {
-                if (currentIndex < csvData.length - 1) {
-                  currentIndex++;
-                  updateEntry();
-                }
-              });
-
-              $('#prev-entry').click(function() {
-                if (currentIndex > 0) {
-                  currentIndex--;
-                  updateEntry();
-                }
-              });
-
-              $('#seek-entry').click(function() {
-                var seekIndex = parseInt($('#entry-seek').val(), 10) - 1;
-                var filteredEntries = csvData.filter(entry => {
-                  var selectedModel = $('#model-filter').val();
-                  var selectedBehavior = $('#behavior-filter').val();
-                  return (!selectedModel || entry.model === selectedModel) && (!selectedBehavior || entry.behavior_id === selectedBehavior);
-                });
-                if (seekIndex >= 0 && seekIndex < filteredEntries.length) {
-                  currentIndex = seekIndex;
-                  updateEntry();
-                }
-              });
-
-              updateEntry();
-            }
-          });
-        }
-
-        // Add tab click handlers
-        $('.nav-tabs a').click(function(e) {
-          e.preventDefault();
-          $(this).tab('show');
-          currentDataset = $(this).attr('href').substring(1); // Remove the # from href
-          loadData(currentDataset);
-        });
-
-        loadData(currentDataset);
-      });
-    </script>
-
-    <div class="row">
+    <!-- Citation -->
+    <section class="row">
       <div class="col-md-8 col-md-offset-2">
-        <h3>
-          Citation
-        </h3>
+        <h3>Citation</h3>
         <div class="form-group col-md-10 col-md-offset-1">
           <textarea id="bibtex" class="form-control" readonly>
 @article{hughes2024bon,
@@ -422,16 +186,235 @@
 }</textarea>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="row">
+    <!-- Footer -->
+    <footer class="row">
       <div class="col-md-8 col-md-offset-2">
         <p class="text-justify">
           This site's design is adapted from <a href="https://forbiddenfacts.github.io/" target="_blank">forbiddenfacts</a>.
         </p>
       </div>
-    </div>
+    </footer>
   </div>
-</body>
 
+  <script>
+    $(document).ready(function() {
+      var currentDataset = 'text';
+      var datasetUrls = {
+        'text': 'assets/data/text_jailbreaks.csv',
+        'vision': 'assets/data/vision_jailbreaks.csv', 
+        'audio': 'assets/data/audio_jailbreaks.csv'
+      };
+
+      function loadData(dataset) {
+        // Clear existing options first
+        $('#model-filter').html('<option value="">All Models</option>');
+        $('#behavior-filter').html('<option value="">All Behaviors</option>');
+        
+        $.ajax({
+          type: "GET", 
+          url: datasetUrls[dataset],
+          dataType: "text",
+          success: function(data) {
+            var csvData = Papa.parse(data, {header: true}).data;
+            var currentIndex = 0;
+
+            function displayEntry(entry, filteredLength) {
+              $('#entries-container').empty();
+                
+              // Common header
+              let html = `
+                <div class="entry">
+                  <h4>Model: ${entry.model}</h4>
+                  <p><strong>Request:</strong> ${entry.direct_request}</p>`;
+
+              // Dataset specific content
+              if (dataset === 'text') {
+                html += `
+                  <p><strong>Augmented Request:</strong> ${entry.augmented_file}</p>`;
+              } else if (dataset === 'audio') {
+                html += `
+                  <p><strong>Sampled augmentation values:</strong></p>
+                  <div class="row">
+                    <div class="col-md-4" style="padding-left: 40px;">
+                      <p>🏃🏽‍♀️ Speed: ${parseFloat(entry.speed).toFixed(2)}x</p>
+                    </div>
+                    <div class="col-md-4" style="padding-left: 40px;">
+                      <p>⚡ Pitch: ${(parseFloat(entry.pitch) / 100).toFixed(2)} semitones</p>
+                    </div>
+                    <div class="col-md-4" style="padding-left: 40px;">
+                      <p>🗣️ Speech: ${parseFloat(entry.speech).toFixed(2)}dB</p>
+                    </div>
+                    <div class="col-md-4" style="padding-left: 40px;">
+                      <p>🚗 Noise: ${parseFloat(entry.noise).toFixed(2)}dB</p>
+                    </div>
+                    <div class="col-md-4" style="padding-left: 40px;">
+                      <p>📢 Volume: ${parseFloat(entry.volume).toFixed(3)}x</p>
+                    </div>
+                    <div class="col-md-4" style="padding-left: 40px;">
+                      <p>🎹 Music: ${parseFloat(entry.music).toFixed(2)}dB</p>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <p><strong>Vocalized Request:</strong></p>
+                      <audio controls>
+                        <source src="assets/${entry.audio_file}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                    <div class="col-md-6">
+                      <p><strong>Augmented Request:</strong></p>
+                      <audio controls>
+                        <source src="assets/${entry.augmented_file}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                  </div>`;
+              } else if (dataset === 'vision') {
+                const dimensionsId = `dimensions-${entry.augmented_file.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                html += `
+                  <p><strong>Sampled augmentation values:</strong></p>
+                  <div class="row">
+                    <div class="col-md-4" style="padding-left: 40px;">
+                      <p>📍 Position: ${entry.position}</p>
+                    </div>
+                    <div class="col-md-4" style="padding-left: 40px;">
+                      <p>🔤 Font: ${entry.font}</p>
+                    </div>
+                    <div class="col-md-4" style="padding-left: 40px;">
+                      <p>📏 Font Scale: ${parseFloat(entry.font_scale).toFixed(2)}</p>
+                    </div>
+                    <div class="col-md-4" style="padding-left: 40px;">
+                      <p>🎨 Color: ${entry.color}</p>
+                    </div>
+                    <div class="col-md-4" style="padding-left: 40px;">
+                      <p>✏️ Thickness: ${entry.thickness}</p>
+                    </div>
+                    <div class="col-md-4" style="padding-left: 40px;">
+                      <p>🖼️ Dimensions: <span id="${dimensionsId}">Loading...</span></p>
+                    </div>
+                  </div>
+                  <p><strong>Augmented Image:</strong></p>
+                  <img src="assets/${entry.augmented_file}" 
+                       style="max-width: 100%; height: auto;"
+                       onload="(function(img) {
+                         const dimensionsEl = document.getElementById('${dimensionsId}');
+                         if (dimensionsEl) {
+                           dimensionsEl.textContent = '(' + img.naturalWidth + ', ' + img.naturalHeight + ')';
+                         }
+                       })(this)">
+                  <div style="margin-top: 20px;">`;
+              }
+
+              // Common response section
+              html += `
+                <p><strong>Model Response:</strong></p>
+                <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 10px; max-height: 200px; overflow-y: auto;">
+                  <p>${entry.response.replace(/\n/g, '<br>')}</p>
+                </div>
+                <p style="font-size: 0.9em; color: #888;">Note: Responses are limited to 200 tokens.</p>`;
+
+              // Audio-specific speech output
+              if (dataset === 'audio' && entry.speech_out_file) {
+                html += `
+                  <p><strong>Speech Output File:</strong></p>
+                  <audio controls>
+                    <source src="assets/${entry.speech_out_file}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                  </audio>`;
+              }
+
+              html += `</div>`;
+
+              $('#entries-container').append(html);
+              $('#entry-info').text(`Entry ${currentIndex + 1} of ${filteredLength}`);
+              $('#entry-seek').attr('max', filteredLength);
+            }
+
+            function updateEntry() {
+              var selectedModel = $('#model-filter').val();
+              var selectedBehavior = $('#behavior-filter').val();
+              var filteredEntries = csvData.filter(entry => {
+                return (!selectedModel || entry.model === selectedModel) && (!selectedBehavior || entry.behavior_id === selectedBehavior);
+              });
+              if (filteredEntries.length > 0) {
+                displayEntry(filteredEntries[currentIndex], filteredEntries.length);
+                
+                // Enable/disable navigation buttons based on current index
+                $('#prev-entry').prop('disabled', currentIndex === 0);
+                $('#next-entry').prop('disabled', currentIndex >= filteredEntries.length - 1);
+              } else {
+                $('#entries-container').empty();
+                $('#entry-info').text('No entries found');
+                $('#prev-entry').prop('disabled', true);
+                $('#next-entry').prop('disabled', true);
+              }
+            }
+
+            // Populate model filter for current dataset only
+            var models = [...new Set(csvData.map(entry => entry.model).filter(model => model))];
+            models.forEach(model => {
+              $('#model-filter').append(`<option value="${model}">${model}</option>`);
+            });
+
+            // Populate behavior filter for current dataset only  
+            var behaviors = [...new Set(csvData.map(entry => entry.behavior_id).filter(behavior => behavior))];
+            behaviors.sort();
+            behaviors.forEach(behavior => {
+              $('#behavior-filter').append(`<option value="${behavior}">${behavior}</option>`);
+            });
+
+            // Event handlers
+            $('#model-filter, #behavior-filter').change(() => {
+              currentIndex = 0;
+              updateEntry();
+            });
+
+            $('#next-entry').click(() => {
+              if (currentIndex < csvData.length - 1) {
+                currentIndex++;
+                updateEntry();
+              }
+            });
+
+            $('#prev-entry').click(() => {
+              if (currentIndex > 0) {
+                currentIndex--;
+                updateEntry();
+              }
+            });
+
+            $('#seek-entry').click(() => {
+              var seekIndex = parseInt($('#entry-seek').val(), 10) - 1;
+              var filteredEntries = csvData.filter(entry => {
+                var selectedModel = $('#model-filter').val();
+                var selectedBehavior = $('#behavior-filter').val();
+                return (!selectedModel || entry.model === selectedModel) && (!selectedBehavior || entry.behavior_id === selectedBehavior);
+              });
+              if (seekIndex >= 0 && seekIndex < filteredEntries.length) {
+                currentIndex = seekIndex;
+                updateEntry();
+              }
+            });
+
+            updateEntry();
+          }
+        });
+      }
+
+      // Tab click handlers
+      $('.nav-tabs a').click(function(e) {
+        e.preventDefault();
+        $(this).tab('show');
+        currentDataset = $(this).attr('href').substring(1);
+        loadData(currentDataset);
+      });
+
+      // Initial load
+      loadData(currentDataset);
+    });
+  </script>
+</body>
 </html>
