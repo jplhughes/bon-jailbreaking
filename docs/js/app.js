@@ -162,14 +162,34 @@ $(document).ready(function() {
           }
         }
 
-        // Populate model filter for current dataset only
-        var models = [...new Set(csvData.map(entry => entry.model).filter(model => model))];
-        models.forEach(model => {
-          $('#model-filter').append(`<option value="${model}">${model}</option>`);
-        });
+        // Function to update model filter
+        function updateModelFilter(selectedBehavior) {
+          // Get current selected model to preserve it if possible
+          const currentModel = $('#model-filter').val();
+          
+          var filteredModels = selectedBehavior ?
+            [...new Set(csvData.filter(entry => entry.behavior_id === selectedBehavior).map(entry => entry.model))] :
+            [...new Set(csvData.map(entry => entry.model))];
+          
+          filteredModels = filteredModels.filter(model => model);
+          filteredModels.sort();
+          
+          $('#model-filter').html('<option value="">All Models</option>');
+          filteredModels.forEach(model => {
+            $('#model-filter').append(`<option value="${model}">${model}</option>`);
+          });
 
-        // Populate behavior filter for current dataset only
+          // Restore previous selection if it's still valid
+          if (currentModel && filteredModels.includes(currentModel)) {
+            $('#model-filter').val(currentModel);
+          }
+        }
+
+        // Function to update behavior filter
         function updateBehaviorFilter(selectedModel) {
+          // Get current selected behavior to preserve it if possible
+          const currentBehavior = $('#behavior-filter').val();
+          
           var filteredBehaviors = selectedModel ? 
             [...new Set(csvData.filter(entry => entry.model === selectedModel).map(entry => entry.behavior_id))] :
             [...new Set(csvData.map(entry => entry.behavior_id))];
@@ -181,20 +201,30 @@ $(document).ready(function() {
           filteredBehaviors.forEach(behavior => {
             $('#behavior-filter').append(`<option value="${behavior}">${behavior}</option>`);
           });
+
+          // Restore previous selection if it's still valid
+          if (currentBehavior && filteredBehaviors.includes(currentBehavior)) {
+            $('#behavior-filter').val(currentBehavior);
+          }
         }
 
-        // Initial behavior filter population
+        // Initial filter population
+        updateModelFilter('');
         updateBehaviorFilter('');
 
         // Event handlers
         $('#model-filter').change(() => {
           var selectedModel = $('#model-filter').val();
+          // Only update behavior filter, don't reset model filter
           updateBehaviorFilter(selectedModel);
           currentIndex = 0;
           updateEntry();
         });
 
         $('#behavior-filter').change(() => {
+          var selectedBehavior = $('#behavior-filter').val();
+          // Only update model filter, don't reset behavior filter
+          updateModelFilter(selectedBehavior);
           currentIndex = 0;
           updateEntry();
         });
