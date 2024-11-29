@@ -328,10 +328,16 @@
                   return (!selectedModel || entry.model === selectedModel) && (!selectedBehavior || entry.behavior_id === selectedBehavior);
                 });
                 if (filteredEntries.length > 0) {
-                  displayEntry(filteredEntries[currentIndex % filteredEntries.length], filteredEntries.length);
+                  displayEntry(filteredEntries[currentIndex], filteredEntries.length);
+                  
+                  // Enable/disable navigation buttons based on current index
+                  $('#prev-entry').prop('disabled', currentIndex === 0);
+                  $('#next-entry').prop('disabled', currentIndex >= filteredEntries.length - 1);
                 } else {
                   $('#entries-container').empty();
                   $('#entry-info').text('No entries found');
+                  $('#prev-entry').prop('disabled', true);
+                  $('#next-entry').prop('disabled', true);
                 }
               }
 
@@ -359,18 +365,27 @@
               });
 
               $('#next-entry').click(function() {
-                currentIndex++;
-                updateEntry();
+                if (currentIndex < csvData.length - 1) {
+                  currentIndex++;
+                  updateEntry();
+                }
               });
 
               $('#prev-entry').click(function() {
-                currentIndex = (currentIndex - 1 + csvData.length) % csvData.length;
-                updateEntry();
+                if (currentIndex > 0) {
+                  currentIndex--;
+                  updateEntry();
+                }
               });
 
               $('#seek-entry').click(function() {
                 var seekIndex = parseInt($('#entry-seek').val(), 10) - 1;
-                if (seekIndex >= 0 && seekIndex < csvData.length) {
+                var filteredEntries = csvData.filter(entry => {
+                  var selectedModel = $('#model-filter').val();
+                  var selectedBehavior = $('#behavior-filter').val();
+                  return (!selectedModel || entry.model === selectedModel) && (!selectedBehavior || entry.behavior_id === selectedBehavior);
+                });
+                if (seekIndex >= 0 && seekIndex < filteredEntries.length) {
                   currentIndex = seekIndex;
                   updateEntry();
                 }
