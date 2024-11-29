@@ -198,6 +198,10 @@
         };
 
         function loadData(dataset) {
+          // Clear existing options first
+          $('#model-filter').html('<option value="">All Models</option>');
+          $('#behavior-filter').html('<option value="">All Behaviors</option>');
+          
           $.ajax({
             type: "GET",
             url: datasetUrls[dataset],
@@ -331,11 +335,13 @@
                 }
               }
 
+              // Populate model filter for current dataset only
               var models = [...new Set(csvData.map(entry => entry.model).filter(model => model))];
               models.forEach(model => {
                 $('#model-filter').append(`<option value="${model}">${model}</option>`);
               });
 
+              // Populate behavior filter for current dataset only
               var behaviors = [...new Set(csvData.map(entry => entry.behavior_id).filter(behavior => behavior))];
               behaviors.sort();
               behaviors.forEach(behavior => {
