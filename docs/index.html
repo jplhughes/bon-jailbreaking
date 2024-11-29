@@ -61,6 +61,7 @@
           <li><a href="https://fbarez.github.io/" target="_blank" style="color: inherit;">Fazl Barez</a></li>
           <li><a href="https://cs.stanford.edu/~sanmi/" target="_blank" style="color: inherit;">Sanmi Koyejo</a></li>
           <li><a href="https://www.linkedin.com/in/henry-sleight-406811227" target="_blank" style="color: inherit;">Henry Sleight</a></li>
+          <li><a href="https://people.eecs.berkeley.edu/~erjones" target="_blank" style="color: inherit;">Erik Jones</a></li>
         </ul>
         <ul class="list-inline">
           <li><a href="https://ethanperez.net/" target="_blank" style="color: inherit;">Ethan Perez</a></li>
@@ -112,23 +113,25 @@
           Abstract
         </h3>
         <p class="text-justify">
-          In this work, we investigate the susceptibility of Audio Language Models (ALMs)
-          to audio-based jailbreaks and introduce Best-of-N (BoN) Jailbreaking, a black-
-          box jailbreaking algorithm to extract harmful information from ALMs. To craft
-          jailbreak inputs, our approach samples audio augmentations and applies them to
-          malicious prompts. We repeat this process until we find a set of augmentations that
-          elicits a harmful response from the target ALM. Empirically, we find that applying
-          BoN with 7000 sampled augmentations achieves an attack success rate (ASR) of
-          over 60% on all models tested, including the preview model for the released GPT-
-          4o1. Furthermore, we uncover power laws that accurately predict the ASR of BoN
-          jailbreaking as a function of the number of samples. These power laws allow us
-          to forecast the effectiveness of BoN jailbreaking as a function of the number of
-          sampled augmentations over an order of magnitude. Finally, we show that BoN
-          jailbreaking can be composed with other black-box attack algorithms for even more
-          effective attacks—combining BoN with an optimized prefix attack achieves 98%
-          ASR on Gemini Pro and Flash. Overall, by exploiting stochastic sampling and
-          sensitivity to variations in a high-dimensional input space, we propose a scalable,
-          composable, and highly effective black-box algorithm for attacking SOTA ALMs.
+          We introduce Best-of-N (BoN) Jailbreaking, a simple black-box algorithm that
+          jailbreaks frontier systems across modalities. BoN jailbreaking works by repeatedly
+          sampling variations of a prompt with a combination of augmentations—such as
+          randomly shuffling characters or adjusting capitalization for textual prompts—until
+          a harmful response is elicited. We find that BoN Jailbreaking achieves high attack
+          success rates (ASRs) on closed-source language models, such as 89% on GPT-4o
+          and 78% on Claude 3.5 Sonnet when sampling 10,000 augmented prompts. Further,
+          it is similarly effective at circumventing state-of-the-art open-source defenses like
+          circuit breakers. BoN also seamlessly extends to other modalities and jailbreaks
+          vision language models (VLMs) such as GPT-4o, and audio language models
+          (ALMs) like Gemini 1.5 Pro, using modality-specific augmentations. BoN reliably
+          improves when we sample more augmented prompts; across all modalities, ASR
+          (as a function of the number of samples N) empirically follows power-law-like
+          behavior for many orders of magnitude. BoN jailbreaking can also be composed with
+          other black-box algorithms for even more effective attacks—we find combining
+          BoN with an optimized prefix attack achieves between 12% and 53% relative
+          improvement in ASR. Overall, our work indicates that despite their capability,
+          language models are still sensitive to seemingly innocuous changes in inputs,
+          which can be exploited by attackers across modalities.
         </p>
       </div>
     </div>
@@ -145,7 +148,7 @@
 
     <div class="col-md-8 col-md-offset-2" style="color: rgb(83, 83, 83); margin-top: 10px;">
       <p>
-        <strong>Overview of BoN jailbreaking and its scaling behavior.</strong> <strong>(top)</strong> Overview of the BoN jailbreaking approach. In Stage 1, audio augmentations are defined and jailbreaking requests are prepared. In Stage 2, BoN is run on each request by applying randomly sampled augmentations, processing the transformed request with the ALM, and grading the response for harmfulness. <strong>(bottom left)</strong> ASR of BoN jailbreaking on the different ALMs as a function of the number of augmented sample attacks (N). On Gemini Flash model, we find that ASR increases from 2% to 77% after 7,200 sampled attacks, highlighting the effectiveness of BoN jailbreaking. <strong>(bottom right)</strong> Power-law scaling of the negative log ASR with respect to N for several ALMs. Dashed lines represent fitted power-law functions. All models achieve at least a 50% jailbreak success rate, with error bars produced via bootstrapping. We uncover consistent power-law behavior across models, which allows forecasting ASR at larger N from the initial steps of BoN jailbreaking.
+        <strong>Overview of BoN jailbreaking, the performance across three input modalities and its scaling behavior.</strong> <strong>(top)</strong> BoN jailbreaking is run on each request by applying randomly sampled augmentations, processing the transformed request with the LLM, and grading the response for harmfulness. <strong>(a)</strong> ASR of BoN jailbreaking on the different LLMs as a function of the number of augmented sample attacks ($N$), with error bars produced via bootstrapping. Across all LLMs, text BoN achieves at least a 52\% ASR after 10,000 sampled attacks, highlighting the effectiveness of BoN jailbreaking. <strong>(b, c)</strong> BoN seamlessly extends to vision and audio inputs by using modality-specific augmentations. <strong>(d)</strong> We show the text modality scaling behavior of the negative log ASR with respect to $N$ for Claude 3.5 Sonnet, suggesting power-law-like behavior.
       </p>
     </div>
 
@@ -182,7 +185,7 @@
       $(document).ready(function() {
         $.ajax({
           type: "GET",
-          url: "assets/bon_jailbreaks.csv",
+          url: "assets/data/audio_jailbreaks.csv",
           dataType: "text",
           success: function(data) {
             var csvData = Papa.parse(data, {header: true}).data;
