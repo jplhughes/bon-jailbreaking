@@ -168,15 +168,33 @@ $(document).ready(function() {
           $('#model-filter').append(`<option value="${model}">${model}</option>`);
         });
 
-        // Populate behavior filter for current dataset only  
-        var behaviors = [...new Set(csvData.map(entry => entry.behavior_id).filter(behavior => behavior))];
-        behaviors.sort();
-        behaviors.forEach(behavior => {
-          $('#behavior-filter').append(`<option value="${behavior}">${behavior}</option>`);
-        });
+        // Populate behavior filter for current dataset only
+        function updateBehaviorFilter(selectedModel) {
+          var filteredBehaviors = selectedModel ? 
+            [...new Set(csvData.filter(entry => entry.model === selectedModel).map(entry => entry.behavior_id))] :
+            [...new Set(csvData.map(entry => entry.behavior_id))];
+          
+          filteredBehaviors = filteredBehaviors.filter(behavior => behavior);
+          filteredBehaviors.sort();
+          
+          $('#behavior-filter').html('<option value="">All Behaviors</option>');
+          filteredBehaviors.forEach(behavior => {
+            $('#behavior-filter').append(`<option value="${behavior}">${behavior}</option>`);
+          });
+        }
+
+        // Initial behavior filter population
+        updateBehaviorFilter('');
 
         // Event handlers
-        $('#model-filter, #behavior-filter').change(() => {
+        $('#model-filter').change(() => {
+          var selectedModel = $('#model-filter').val();
+          updateBehaviorFilter(selectedModel);
+          currentIndex = 0;
+          updateEntry();
+        });
+
+        $('#behavior-filter').change(() => {
           currentIndex = 0;
           updateEntry();
         });
