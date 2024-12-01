@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Callable, List, Tuple
 
 import ipywidgets
+import matplotlib as mpl
 import matplotlib.colors as mc
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,6 +15,7 @@ import plotly.callbacks
 import plotly.express
 import plotly.graph_objects
 import seaborn as sns
+from matplotlib import font_manager
 from pydantic import BaseModel
 from termcolor import colored
 
@@ -224,13 +226,15 @@ class ASRPlotter:
             "gpt-4o-s2s": "blueviolet",
             "train": self.alter_color("seagreen", 1.2),
             "test": self.alter_color("seagreen", 0.8),
+            "DiVA": "purple",
         }
 
-        self.LINESTYLE_MAP = {"gemini-1.5-flash-001": "-", "gemini-1.5-pro-001": "--", "gpt-4o-s2s": ":-"}
+        self.LINESTYLE_MAP = {"gemini-1.5-flash-001": "-", "gemini-1.5-pro-001": "--", "gpt-4o-s2s": ":-", "DiVA": ":"}
         self.MODEL_NAMES = {
             "gemini-1.5-flash-001": "Gemini-1.5 Flash",
             "gemini-1.5-pro-001": "Gemini-1.5 Pro",
             "gpt-4o-s2s": "GPT-4o Voice Mode",
+            "DiVA": "DiVA",
         }
         self.PLOT_LABELS = {
             "attack": "Attack",
@@ -551,7 +555,6 @@ class ASRPlotter:
                             color=color,
                         )
                 elif plot_type == "bar":
-
                     # Plot the bars
                     axs[i].bar(
                         category_positions + j * bar_width,
@@ -676,3 +679,27 @@ class ASRPlotter:
                     add_baseline_lines=add_baseline_lines,
                     baseline_val=baseline_val,
                 )
+
+
+def set_plot_style():
+    mpl.rcParams["axes.unicode_minus"] = False
+    # Color palette
+    custom_colors = sns.color_palette("colorblind")
+
+    # Font settings
+    font_path = "/mnt/jailbreak-defense/exp/data/times_new_roman.ttf"
+    font_manager.fontManager.addfont(font_path)
+    plt.rcParams["font.family"] = "Times New Roman Cyr"
+
+    # Other common settings
+    plt.rcParams["figure.dpi"] = 600
+    plt.rcParams["savefig.dpi"] = 600
+    plt.rcParams["figure.figsize"] = (5.5, 3)
+    plt.rcParams["axes.titlesize"] = 10
+    plt.rcParams["axes.labelsize"] = 9
+    plt.rcParams["legend.fontsize"] = 7.5
+    plt.rcParams["xtick.labelsize"] = 8
+    plt.rcParams["ytick.labelsize"] = 8
+    plt.rcParams["figure.titlesize"] = 12
+
+    return custom_colors

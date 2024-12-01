@@ -3,9 +3,11 @@ import io
 from pathlib import Path
 
 import cv2
+import google.generativeai as genai
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
+from vertexai.generative_models import Part
 
 
 def get_default_image(text: str, height: int = 320, width: int = 320):
@@ -95,6 +97,7 @@ def add_text_to_image(
             line = test_line
     wrapped_text += line
 
+    # Check if text height fits
     y0, dy = position[1], int(h * 1.5)
     for i, line in enumerate(wrapped_text.split("\n")):
         y = y0 + i * dy
@@ -146,3 +149,34 @@ def display_image_without_frame(image: np.ndarray, height: int = 4, width: int =
 
     ax.imshow(image, aspect="auto")
     plt.show()
+
+
+def get_image_file_type(image_file: str) -> str:
+    if Path(image_file).suffix.lower() in [".jpg", ".jpeg"]:
+        return "jpeg"
+    elif Path(image_file).suffix.lower() in [".png"]:
+        return "png"
+    else:
+        raise ValueError(f"Image path {image_file} is not a valid media_type!")
+
+
+def prepare_gemini_image(image_file: str, use_vertexai: bool = False) -> Part | genai.types.file_types.File:
+    if use_vertexai:
+        encoded_image = image_to_base64(image_file)
+        image_type = get_image_file_type(image_file)
+        return Part.from_data(data=encoded_image, mime_type=f"image/{image_type}")
+    else:
+        image = genai.upload_file(image_file)
+        return image
+
+
+def basic_text_image(text: str, path: str):
+    image_with_text = add_text_to_image(
+        image=np.zeros((400, 400, 3), dtype=np.uint8),
+        font_scale=0.3,
+        thickness=1,
+        text=text,
+        position=(10, 20),
+    )
+    save_image_from_array(image_with_text, path)
+    return image_with_text

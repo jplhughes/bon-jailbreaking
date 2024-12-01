@@ -16,4 +16,4 @@ mkdir -p $output_dir
 
 python3 -m almj.data_prep.convert_bon_to_working_augs --augmentations_path $augmentations_path --input_file_path $input_file_path --n_requests $n_requests --file_name $file_name --model $model
 
-python3 -m almj.run.run_specific_vector_augmentation --input_file_path $input_file_path --output_dir $output_dir --augmentations_path $augmentations_path --alm_temperature $alm_temperature --only_run_on_broken_example True --alm_n_samples $alm_n_samples --use_same_file True
+python3 -m almj.attacks.audio_understanding.run_specific_vector_augmentation --input_file_path $input_file_path --output_dir $output_dir --augmentations_path $augmentations_path --alm_temperature $alm_temperature --only_run_on_broken_example True --alm_n_samples $alm_n_samples --use_same_file True

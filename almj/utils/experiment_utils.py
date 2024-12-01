@@ -35,7 +35,9 @@ class ExperimentConfigBase:
     gemini_recitation_rate_check_volume: int = 100
     gemini_recitation_rate_threshold: float = 0.5
     anthropic_num_threads: int = 40
-    organization: str = "OPENAI_ORG"
+    gray_swan_num_threads: int = 40
+    huggingface_num_threads: int = 100
+    openai_tag: str = "OPENAI_API_KEY1"
     print_prompt_and_response: bool = False
 
     datetime_str: str = dataclasses.field(init=False)
@@ -74,7 +76,8 @@ class ExperimentConfigBase:
                 gemini_recitation_rate_check_volume=self.gemini_recitation_rate_check_volume,
                 gemini_recitation_rate_threshold=self.gemini_recitation_rate_threshold,
                 anthropic_num_threads=self.anthropic_num_threads,
-                organization=self.organization,
+                gray_swan_num_threads=self.gray_swan_num_threads,
+                huggingface_num_threads=self.huggingface_num_threads,
                 cache_dir=self.cache_dir,
                 prompt_history_dir=self.prompt_history_dir,
             )
@@ -109,7 +112,7 @@ class ExperimentConfigBase:
 
         # Do remaining environment setup after we set up our logging, so that
         # our basicConfig is the one that gets used.
-        utils.setup_environment()
+        utils.setup_environment(openai_tag=self.openai_tag)
 
     def log_api_cost(self, metadata: dict[str, str] | None = None):
         if metadata is None:

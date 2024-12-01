@@ -172,13 +172,11 @@ def get_prompt_template_and_parser(
 def setup_environment(
     anthropic_tag: str = "ANTHROPIC_API_KEY",
     logging_level: str = "info",
-    openai_tag: str = "OPENAI_API_KEY",
-    organization_tag: str = "OPENAI_ORG",
+    openai_tag: str = "OPENAI_API_KEY1",
 ):
     setup_logging(logging_level)
     secrets = load_secrets("SECRETS")
     os.environ["OPENAI_API_KEY"] = secrets[openai_tag]
-    os.environ["OPENAI_ORG_ID"] = secrets[organization_tag]
     os.environ["ANTHROPIC_API_KEY"] = secrets[anthropic_tag]
     if "RUNPOD_API_KEY" in secrets:
         os.environ["RUNPOD_API_KEY"] = secrets["RUNPOD_API_KEY"]
@@ -197,6 +195,8 @@ def setup_environment(
         os.environ["GOOGLE_API_KEY_PERSONAL"] = secrets["GOOGLE_API_KEY_PERSONAL"]
     if "OPENAI_S2S_API_KEY" in secrets:
         os.environ["OPENAI_S2S_API_KEY"] = secrets["OPENAI_S2S_API_KEY"]
+    if "GRAYSWAN_API_KEY" in secrets:
+        os.environ["GRAYSWAN_API_KEY"] = secrets["GRAYSWAN_API_KEY"]
 
 
 def setup_logging(logging_level):
@@ -223,7 +223,6 @@ def load_secrets(local_file_path):
         secrets = {
             "ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY"),
             "OPENAI_API_KEY": os.environ.get("OPENAI_API_KEY"),
-            "OPENAI_ORG": os.environ.get("OPENAI_ORG"),
         }
     return secrets
 
@@ -290,6 +289,19 @@ def load_jsonl(file_path: Path | str, **kwargs) -> list:
         return data
 
 
+def fix_filepath(root_dir: str, filepath: str, split_dir: str = "/exp"):
+    """
+    Function to update the filepath depending on which system we're on.
+    Filepaths can have different base folders (i.e. /mnt/jailbreak-defense/exp) on shared-devbox but (/workspace/exp) on runpods with the shared volume.
+    All filepaths have 'exp' in them so this function parses the filepath to find the prefix before the exp directory and sets this as the root_dir.
+    The root_dir is parsed from an input-filepath
+    """
+    if root_dir in filepath:
+        return filepath
+    else:
+        return f"{root_dir}{split_dir}{str.split(filepath, split_dir)[1]}"
+
+
 def convert_paths_to_strings(dict_list):
     """
     Iterate through a list of dictionaries and convert any Path objects to strings.
@@ -300,12 +312,15 @@ def convert_paths_to_strings(dict_list):
     new_dict_list = []
     for d in dict_list:
         new_dict = {}
-        for key, value in d.items():
-            if isinstance(value, Path):
-                new_dict[key] = str(value)
-            else:
-                new_dict[key] = value
-        new_dict_list.append(new_dict)
+        if isinstance(d, dict):
+            for key, value in d.items():
+                if isinstance(value, Path):
+                    new_dict[key] = str(value)
+                else:
+                    new_dict[key] = value
+            new_dict_list.append(new_dict)
+        else:
+            new_dict_list.append(d)
     return new_dict_list
 
 
