@@ -17,7 +17,7 @@ import simple_parsing
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from almj.apis.inference.api import InferenceAPI
-from almj.attacks.run_alm import get_harmbench_model_response as get_alm_response
+from almj.attacks.audio.run_alm import get_harmbench_model_response as get_alm_response
 from almj.classifiers.run_classifier import get_model_response as get_classifier_response
 from almj.data_prep.augmentation import SoxAugmentation
 from almj.utils import utils

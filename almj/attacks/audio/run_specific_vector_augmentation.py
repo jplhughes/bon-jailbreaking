@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from simple_parsing import ArgumentParser
 
-from almj.attacks.run_bon_jailbreaking import get_asr, get_augmentation_func
+from almj.attacks.audio.run_bon_jailbreaking import get_asr, get_augmentation_func
 from almj.data_prep.augmentation import SoxAugmentation
 from almj.utils.audio_utils import IntermediateAugmentation, WAVFile
 from almj.utils.experiment_utils import ExperimentConfigBase

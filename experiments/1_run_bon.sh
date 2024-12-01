@@ -29,7 +29,7 @@ for alm_model in "gemini-1.5-flash-001"; do
 
         output_dir=./exp/figure1/${alm_model}/${choose_specific_id}
 
-        python -m almj.attacks.run_bon_jailbreaking --input_file_path $input_file_path --output_dir $output_dir --enable_cache False --openai_num_threads 120 --gemini_num_threads 120 --alm_model $alm_model --seed $alg_seed --alm_temperature $alm_temperature --alm_n_samples $alm_n_samples --chosen_augmentations $chosen_augmentations --sigma $sigma --choose_specific_id $choose_specific_id  --asr_threshold $asr_threshold --num_concurrent_k $num_concurrent_k --n_steps $n_steps --run_batch False
+        python -m almj.attacks.audio.run_bon_jailbreaking --input_file_path $input_file_path --output_dir $output_dir --enable_cache False --openai_num_threads 120 --gemini_num_threads 120 --alm_model $alm_model --seed $alg_seed --alm_temperature $alm_temperature --alm_n_samples $alm_n_samples --chosen_augmentations $chosen_augmentations --sigma $sigma --choose_specific_id $choose_specific_id  --asr_threshold $asr_threshold --num_concurrent_k $num_concurrent_k --n_steps $n_steps --run_batch False
     done
 
     # run repeated sample baseline
