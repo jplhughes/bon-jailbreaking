@@ -34,6 +34,8 @@ from .anthropic import ANTHROPIC_MODELS, AnthropicChatModel
 from .cache_manager import CacheManager
 from .gemini.genai import GeminiModel
 from .gemini.vertexai import GeminiVertexAIModel
+from .gray_swan import GRAYSWAN_MODELS, GraySwanChatModel
+from .huggingface import HUGGINGFACE_MODELS, HuggingFaceModel
 from .model import InferenceAPIModel
 from .openai.chat import OpenAIChatModel
 from .openai.completion import OpenAICompletionModel
@@ -65,7 +67,8 @@ class InferenceAPI:
         gemini_num_threads: int = 120,
         gemini_recitation_rate_check_volume: int = 100,
         gemini_recitation_rate_threshold: float = 0.5,
-        organization: str = "OPENAI_ORG",
+        gray_swan_num_threads: int = 80,
+        huggingface_num_threads: int = 100,
         prompt_history_dir: Path | Literal["default"] | None = "default",
         cache_dir: Path | Literal["default"] | None = "default",
         empty_completion_threshold: int = 0,
@@ -75,27 +78,25 @@ class InferenceAPI:
         Set prompt_history_dir to "default" to use the default prompt history directory.
         """
 
-        if openai_fraction_rate_limit >= 1:
-            raise ValueError("openai_fraction_rate_limit must be less than 1")
+        if openai_fraction_rate_limit > 1:
+            raise ValueError("openai_fraction_rate_limit must be 1 or less")
 
         self.anthropic_num_threads = anthropic_num_threads
         self.openai_fraction_rate_limit = openai_fraction_rate_limit
-        self.organization = organization
-        # limit openai api calls to 50 to stop jamming
+        # limit openai api calls to stop async jamming
         self.openai_semaphore = asyncio.Semaphore(openai_num_threads)
         self.gemini_semaphore = asyncio.Semaphore(gemini_num_threads)
         self.openai_s2s_semaphore = asyncio.Semaphore(openai_s2s_num_threads)
         self.gemini_recitation_rate_check_volume = gemini_recitation_rate_check_volume
         self.gemini_recitation_rate_threshold = gemini_recitation_rate_threshold
+        self.gray_swan_num_threads = gray_swan_num_threads
+        self.huggingface_num_threads = huggingface_num_threads
         self.empty_completion_threshold = empty_completion_threshold
         self.gpt4o_s2s_rpm_cap = gpt4o_s2s_rpm_cap
         self.init_time = time.time()
         self.current_time = time.time()
         self.n_calls = 0
         self.gpt_4o_rate_limiter = S2SRateLimiter(self.gpt4o_s2s_rpm_cap)
-
-        if self.organization is None:
-            self.organization = "OPENAI_ORG"
 
         secrets = load_secrets("SECRETS")
         if prompt_history_dir == "default":
@@ -122,26 +123,34 @@ class InferenceAPI:
 
         self._openai_completion = OpenAICompletionModel(
             frac_rate_limit=self.openai_fraction_rate_limit,
-            organization=secrets[self.organization],
             prompt_history_dir=self.prompt_history_dir,
         )
-
-        self._openai_gpt4base = self._openai_completion
 
         self._openai_chat = OpenAIChatModel(
             frac_rate_limit=self.openai_fraction_rate_limit,
-            organization=secrets[self.organization],
             prompt_history_dir=self.prompt_history_dir,
         )
 
-        self._openai_moderation = OpenAIModerationModel(organization=secrets[self.organization])
+        self._openai_moderation = OpenAIModerationModel()
 
-        self._openai_embedding = OpenAIEmbeddingModel(organization=secrets[self.organization])
-        self._openai_s2s = OpenAIS2SModel(api_key=secrets["OPENAI_S2S_API_KEY"])
+        self._openai_embedding = OpenAIEmbeddingModel()
+        self._openai_s2s = OpenAIS2SModel()
 
         self._anthropic_chat = AnthropicChatModel(
             num_threads=self.anthropic_num_threads,
             prompt_history_dir=self.prompt_history_dir,
+        )
+
+        self._huggingface = HuggingFaceModel(
+            num_threads=self.huggingface_num_threads,
+            prompt_history_dir=self.prompt_history_dir,
+            token=secrets["HF_API_KEY"] if "HF_API_KEY" in secrets else None,
+        )
+
+        self._gray_swan = GraySwanChatModel(
+            num_threads=self.gray_swan_num_threads,
+            prompt_history_dir=self.prompt_history_dir,
+            api_key=secrets["GRAYSWAN_API_KEY"] if "GRAYSWAN_API_KEY" in secrets else None,
         )
 
         self._gemini_vertex = GeminiVertexAIModel(prompt_history_dir=self.prompt_history_dir)
@@ -154,6 +163,7 @@ class InferenceAPI:
         self._batch_audio_models = {}
 
         # Batched models require GPU and we only want to initialize them if we have a GPU available
+        print(torch.cuda.is_available())
         if torch.cuda.is_available():
             for model_name in BATCHED_MODELS:
                 try:
@@ -196,14 +206,16 @@ class InferenceAPI:
             return self._gemini_genai
 
     def model_id_to_class(self, model_id: str, gemini_use_vertexai: bool = False) -> InferenceAPIModel:
-        if model_id == "gpt-4-base":
-            return self._openai_gpt4base
-        elif model_id in COMPLETION_MODELS:
+        if model_id in COMPLETION_MODELS:
             return self._openai_completion
         elif model_id in GPT_CHAT_MODELS or "ft:gpt-3.5-turbo" in model_id:
             return self._openai_chat
         elif model_id in ANTHROPIC_MODELS:
             return self._anthropic_chat
+        elif model_id in HUGGINGFACE_MODELS:
+            return self._huggingface
+        elif model_id in GRAYSWAN_MODELS:
+            return self._gray_swan
         elif model_id in GEMINI_MODELS:
             return self.select_gemini_model(gemini_use_vertexai)
         elif model_id in BATCHED_MODELS:
@@ -271,11 +283,6 @@ class InferenceAPI:
         else:
             responses = valid_responses
         return responses[:n]
-
-    async def rate_limited_call(self, model_class, *args, **kwargs):
-        self.n_calls += 1
-        await self.gpt_4o_rate_limiter.acquire()
-        return await model_class(*args, **kwargs)
 
     async def __call__(
         self,
@@ -379,17 +386,18 @@ class InferenceAPI:
                     # If some prompts are not cached, we need to make API calls for those
                     uncached_prompts = [p for p, c in zip(prompt.prompts, cached_results) if c is None]
                     # Check that len(responses) we get from cache + len(uncached_prompts) == len(prompts)
-                    assert len(cached_responses) + len(uncached_prompts) == len(
+                    assert len([i for i in cached_responses if i is not None]) + len(uncached_prompts) == len(
                         prompt.prompts
                     ), f"""Length of responses + uncached_prompts should equal length of full batched prompts!
                         Instead there are {len(cached_responses)} responses, {len(uncached_prompts)} uncached_prompts and {len(prompt.prompts)}!"""
+
                     prompt = BatchPrompt(prompts=uncached_prompts)
 
                 else:
                     # If prompt is a single prompt and there is no cached result, simply return the original prompt for regular processing
                     prompt = prompt
 
-        if isinstance(model_class, AnthropicChatModel):
+        if isinstance(model_class, AnthropicChatModel) or isinstance(model_class, HuggingFaceModel):
             # Anthropic chat doesn't support generating multiple candidates at once, so we have to do it manually
             candidate_responses = list(
                 chain.from_iterable(
@@ -431,7 +439,7 @@ class InferenceAPI:
                 raise ValueError(f"{model_class.__class__.__name__} requires a BatchPrompt input")
             candidate_responses = model_class(
                 model_ids=model_ids,
-                prompt=prompt,
+                batch_prompt=prompt,
                 print_prompt_and_response=print_prompt_and_response,
                 max_attempts_per_api_call=max_attempts_per_api_call,
                 n=num_candidates,
@@ -441,17 +449,20 @@ class InferenceAPI:
 
             # Update candidate_responses to include responses from cache
             candidate_iter = iter(candidate_responses)
-            candidate_responses = [
-                next(candidate_iter) if response is None else response for response in cached_responses
-            ]
+            if self.cache_manager is not None:
+                candidate_responses = [
+                    next(candidate_iter) if response is None else response for response in cached_responses
+                ]
+            else:
+                candidate_responses = candidate_responses
 
         elif isinstance(model_class, OpenAIS2SModel):
             candidate_responses = []
             for _ in range(num_candidates):
-                # await self.gpt4o_s2s_rate_limit()  # Apply rate limiting
                 async with self.openai_s2s_semaphore:
-                    response = await self.rate_limited_call(
-                        model_class,
+                    self.n_calls += 1
+                    await self.gpt_4o_rate_limiter.acquire()
+                    response = await model_class(
                         model_ids=model_ids,
                         prompt=prompt,
                         audio_out_dir=audio_out_dir,
@@ -461,9 +472,7 @@ class InferenceAPI:
                         **kwargs,
                     )
                     candidate_responses.extend(response)
-                    await self.check_rate_limit()
         else:
-
             async with self.openai_semaphore:
                 candidate_responses = await model_class(
                     model_ids,

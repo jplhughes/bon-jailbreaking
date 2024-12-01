@@ -15,13 +15,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 class OpenAIEmbeddingModel:
-    def __init__(self, organization: str):
+    def __init__(self):
         # TODO: Actually implement a proper rate limit
         self.num_threads = 1
-        self.organization = organization
         self.batch_size = 2048  # Max batch size for embedding endpoint
 
-        self.aclient = openai.AsyncClient(organization=self.organization)
+        self.aclient = openai.AsyncClient()
         self.available_requests = asyncio.BoundedSemaphore(self.num_threads)
 
     async def embed(

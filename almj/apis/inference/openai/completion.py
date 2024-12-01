@@ -10,7 +10,7 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 from almj.data_models import LLMResponse, Prompt
 
 from .base import OpenAIModel
-from .utils import COMPLETION_MODELS, price_per_token
+from .utils import COMPLETION_MODELS, get_rate_limit, price_per_token
 
 LOGGER = logging.getLogger(__name__)
 
@@ -26,12 +26,19 @@ class OpenAICompletionModel(OpenAIModel):
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {api_key}",
-            "OpenAI-Organization": self.organization,
         }
         data = {"model": model_id, "prompt": "a", "max_tokens": 1}
         response = requests.post(url, headers=headers, json=data)
         if "x-ratelimit-limit-tokens" not in response.headers:
-            raise RuntimeError("Failed to get dummy response header")
+            tpm, rpm = get_rate_limit(model_id)
+            print(f"Failed to get dummy response header {model_id}, setting to tpm, rpm: {tpm}, {rpm}")
+            header_dict = dict(response.headers)
+            return header_dict | {
+                "x-ratelimit-limit-tokens": str(tpm),
+                "x-ratelimit-limit-requests": str(rpm),
+                "x-ratelimit-remaining-tokens": str(tpm),
+                "x-ratelimit-remaining-requests": str(rpm),
+            }
         return response.headers
 
     def _count_prompt_token_capacity(self, prompt: Prompt, **kwargs) -> int:
@@ -43,7 +50,7 @@ class OpenAICompletionModel(OpenAIModel):
         return prompt_tokens + completion_tokens
 
     async def _make_api_call(self, prompt: Prompt, model_id, start_time, **params) -> list[LLMResponse]:
-        LOGGER.debug(f"Making {model_id} call with {self.organization}")
+        LOGGER.debug(f"Making {model_id} call")
         prompt_file = self.create_prompt_history_file(prompt, model_id, self.prompt_history_dir)
         api_start = time.time()
         api_response: openai.types.Completion = await self.aclient.completions.create(

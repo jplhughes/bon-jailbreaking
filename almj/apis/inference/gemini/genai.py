@@ -107,9 +107,9 @@ class GeminiModel(InferenceAPIModel):
             model = genai.GenerativeModel(model_name=model_id, safety_settings=safety_settings)
 
         content = prompt.gemini_format()
-        audio_input_files = [i for i in content if isinstance(i, genai.types.file_types.File)]
+        upload_files = [i for i in content if isinstance(i, genai.types.file_types.File)]
         response = await model.generate_content_async(contents=content)
-        return response, audio_input_files
+        return response, upload_files
 
     async def check_recitation_rates(self):
         if self.total_processed_prompts >= self.recitation_rate_check_volume:
@@ -142,7 +142,7 @@ class GeminiModel(InferenceAPIModel):
         generation_config = self.get_generation_config(kwargs)
         safety_settings = self.get_safety_settings(safety_threshold)
 
-        async_response, audio_input_files = await self.run_query(
+        async_response, upload_files = await self.run_query(
             model_id=model_id, prompt=prompt, safety_settings=safety_settings, generation_config=generation_config
         )
 

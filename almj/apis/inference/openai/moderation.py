@@ -17,7 +17,6 @@ LOGGER = logging.getLogger(__name__)
 class OpenAIModerationModel:
     def __init__(
         self,
-        organization: str,
         num_threads: int = 100,
     ):
         """
@@ -26,10 +25,9 @@ class OpenAIModerationModel:
         a limit here to be safe and avoid DDOS preventions from kicking in.
         """
         self.num_threads = num_threads
-        self.organization = organization
         self._batch_size = 32  # Max batch size for moderation endpoint
 
-        self.aclient = openai.AsyncClient(organization=self.organization)
+        self.aclient = openai.AsyncClient()
         self.available_requests = asyncio.BoundedSemaphore(self.num_threads)
 
     async def _single_moderation_request(

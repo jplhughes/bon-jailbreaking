@@ -59,7 +59,7 @@ class BatchAudioModel(InferenceAPIModel):
         # Process and cache results for uncached prompts
         for i, completion in enumerate(decoded_output):
             response = LLMResponse(
-                model_id=model_ids,
+                model_id=model_id,
                 prompt=batch_prompt.prompts[i],
                 stop_reason="max_tokens",
                 completion=completion,

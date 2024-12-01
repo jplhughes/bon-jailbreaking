@@ -31,7 +31,6 @@ class OpenAIChatModel(OpenAIModel):
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {api_key}",
-            "OpenAI-Organization": self.organization,
         }
         data = {
             "model": model_id,
@@ -83,7 +82,7 @@ class OpenAIChatModel(OpenAIModel):
         return top_logprobs
 
     async def _make_api_call(self, prompt: Prompt, model_id, start_time, **params) -> list[LLMResponse]:
-        LOGGER.debug(f"Making {model_id} call with {self.organization}")
+        LOGGER.debug(f"Making {model_id} call")
 
         if prompt.contains_image():
             assert model_id in VISION_MODELS, f"Model {model_id} does not support images"

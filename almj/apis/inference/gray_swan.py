@@ -4,35 +4,27 @@ import time
 from pathlib import Path
 from traceback import format_exc
 
-import anthropic.types
-from anthropic import AsyncAnthropic
+from gray_swan import AsyncGraySwan
 
 from almj.data_models import LLMResponse, Prompt
 
 from .model import InferenceAPIModel
 
-ANTHROPIC_MODELS = {
-    "claude-3-5-sonnet-20240620",
-    "claude-3-opus-20240229",
-    "claude-3-sonnet-20240229",
-    "claude-3-haiku-20240307",
-}
-VISION_MODELS = {
-    "claude-3-5-sonnet-20240620",
-    "claude-3-opus-20240229",
-}
+GRAYSWAN_MODELS = {"cygnet"}
 LOGGER = logging.getLogger(__name__)
 
 
-class AnthropicChatModel(InferenceAPIModel):
+class GraySwanChatModel(InferenceAPIModel):
     def __init__(
         self,
         num_threads: int,
         prompt_history_dir: Path | None = None,
+        api_key: str | None = None,
     ):
+        assert api_key is not None, "GRAYSWAN_API_KEY environment variable must be set"
         self.num_threads = num_threads
         self.prompt_history_dir = prompt_history_dir
-        self.aclient = AsyncAnthropic()  # Assuming AsyncAnthropic has a default constructor
+        self.aclient = AsyncGraySwan(api_key=api_key)
         self.available_requests = asyncio.BoundedSemaphore(int(self.num_threads))
         self.allowed_kwargs = {"temperature", "max_tokens"}
 
@@ -46,18 +38,13 @@ class AnthropicChatModel(InferenceAPIModel):
         **kwargs,
     ) -> list[LLMResponse]:
         start = time.time()
-        assert len(model_ids) == 1, "Anthropic implementation only supports one model at a time."
-
+        assert len(model_ids) == 1, "Cygnet implementation only supports one model at a time."
         (model_id,) = model_ids
 
-        if prompt.contains_image():
-            assert model_id in VISION_MODELS, f"Model {model_id} does not support images"
-
-        sys_prompt, chat_messages = prompt.anthropic_format()
         prompt_file = self.create_prompt_history_file(prompt, model_id, self.prompt_history_dir)
 
         LOGGER.debug(f"Making {model_id} call")
-        response: anthropic.types.Message | None = None
+        response = None
         duration = None
 
         error_list = []
@@ -67,13 +54,12 @@ class AnthropicChatModel(InferenceAPIModel):
                     api_start = time.time()
 
                     filtered_kwargs = {k: v for k, v in kwargs.items() if k in self.allowed_kwargs}
-                    response = await self.aclient.messages.create(
-                        messages=chat_messages,
+                    response = await self.aclient.chat.completion.create(
+                        messages=prompt.openai_format(),
                         model=model_id,
+                        stream=False,
                         **filtered_kwargs,
-                        **(dict(system=sys_prompt) if sys_prompt else {}),
                     )
-
                     api_duration = time.time() - api_start
                     if not is_valid(response):
                         raise RuntimeError(f"Invalid response according to is_valid {response}")
@@ -88,20 +74,17 @@ class AnthropicChatModel(InferenceAPIModel):
 
         duration = time.time() - start
         LOGGER.debug(f"Completed call to {model_id} in {duration}s")
-        if response is None:
-            raise RuntimeError(f"Failed to get a response from the API after {max_attempts} attempts.")
 
-        else:
-            assert len(response.content) == 1  # Anthropic doesn't support multiple completions (as of 2024-03-12).
+        assert len(response.choices) == 1, f"Expected 1 choice, got {len(response.choices)}"
 
-            response = LLMResponse(
-                model_id=model_id,
-                completion=response.content[0].text,
-                stop_reason=response.stop_reason,
-                duration=duration,
-                api_duration=api_duration,
-                cost=0,
-            )
+        response = LLMResponse(
+            model_id=model_id,
+            completion=response.choices[0].message.content,
+            stop_reason=response.choices[0].finish_reason,
+            duration=duration,
+            api_duration=api_duration,
+            cost=0,
+        )
         duration = time.time() - start
         LOGGER.debug(f"Completed call to {model_id} in {duration}s")
 
@@ -112,22 +95,3 @@ class AnthropicChatModel(InferenceAPIModel):
             prompt.pretty_print(responses)
 
         return responses
-
-    def make_stream_api_call(
-        self,
-        model_id: str,
-        prompt: Prompt,
-        max_tokens: int,
-        **params,
-    ) -> anthropic.AsyncMessageStreamManager[anthropic.AsyncMessageStream]:
-        # TODO(tony): Can eventually wrap this in an async generator and keep
-        #             track of cost. Will need to do this in the parent API
-        #             class.
-        sys_prompt, chat_messages = prompt.anthropic_format()
-        return self.aclient.messages.stream(
-            model=model_id,
-            messages=chat_messages,
-            **(dict(system=sys_prompt) if sys_prompt else {}),
-            max_tokens=max_tokens,
-            **params,
-        )
