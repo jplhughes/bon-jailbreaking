@@ -44,11 +44,11 @@ class ExperimentConfig(ExperimentConfigBase):
     # vlm
     vlm_model: str = "gpt-4o-mini"
     vlm_n_samples: int = 1
-    vlm_temperature: float = 0.0
+    vlm_temperature: float = 1.0
     # algorithm
     num_concurrent_k: int = 5
     n_steps: int = None
-    asr_threshold: float = 1.0
+    asr_threshold: float = 0.01
     sigma: float | None = None  # if None, use get_kwargs, otherwise use get_kwargs_gaussian
     background_color: str = "color"  # either color or bw (black and white)
     background_type: str = "pixels"  # either pixels, blocks, or grid

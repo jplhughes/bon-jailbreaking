@@ -193,8 +193,6 @@ def setup_environment(
         os.environ["GOOGLE_PROJECT_REGION"] = secrets["GOOGLE_PROJECT_REGION"]
     if "GOOGLE_API_KEY_PERSONAL" in secrets:
         os.environ["GOOGLE_API_KEY_PERSONAL"] = secrets["GOOGLE_API_KEY_PERSONAL"]
-    if "OPENAI_S2S_API_KEY" in secrets:
-        os.environ["OPENAI_S2S_API_KEY"] = secrets["OPENAI_S2S_API_KEY"]
     if "GRAYSWAN_API_KEY" in secrets:
         os.environ["GRAYSWAN_API_KEY"] = secrets["GRAYSWAN_API_KEY"]
 

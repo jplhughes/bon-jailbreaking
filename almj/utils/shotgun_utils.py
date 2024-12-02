@@ -963,6 +963,7 @@ def get_jailbreak_times_comparison(
     indices: List[int] | None = None,
     k_sizes: Dict[str, int] | None = None,
     overwrite: bool = False,
+    cache_dir: Path | None = None,
 ) -> pd.DataFrame:
     """Creates a DataFrame comparing jailbreak times across different models.
 
@@ -976,7 +977,8 @@ def get_jailbreak_times_comparison(
         DataFrame with models as columns, indices as rows, and jailbreak times as values
     """
     # Use the specified cache directory
-    cache_dir = Path("/mnt/jailbreak-defense/exp/aenguslynch/notebook_caching/jailbreak_times")
+    if cache_dir is None:
+        cache_dir = Path("exp/jailbreak_times")
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     # Check if cached results exist for all models

@@ -78,7 +78,7 @@ class ExperimentConfig(ExperimentConfigBase):
     # lm
     lm_model: str = "gpt-4o-mini"
     n_samples: int = 1
-    lm_temperature: float = 0.0
+    lm_temperature: float = 1.0
     max_tokens: int = 300
     system_prompt_path: str | None = None
     prefix_path: str | None = None
@@ -86,7 +86,7 @@ class ExperimentConfig(ExperimentConfigBase):
     # algorithm
     num_concurrent_k: int = 5
     n_steps: int = 4
-    asr_threshold: float = 1.0
+    asr_threshold: float = 0.01
     sigma: float = 0.4  # proportion of characters to augment
     reliability_check: bool = False
     reliability_check_samples: int = 10

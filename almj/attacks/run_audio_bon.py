@@ -38,17 +38,19 @@ class ExperimentConfig(ExperimentConfigBase):
     # ALM
     alm_model: str = "gemini-1.5-flash-001"
     alm_n_samples: int = 1
-    alm_temperature: float = 0.0
+    alm_temperature: float = 1.0
     alm_max_tokens: int = 200
     # algorithm
     num_concurrent_k: int = 5
     n_steps: int = None
     population_size: int | None = None
-    chosen_augmentations: List[str] = dataclasses.field(default_factory=lambda: ["speed", "pitch", "music"])
+    chosen_augmentations: List[str] = dataclasses.field(
+        default_factory=lambda: ["speed", "pitch", "speech", "noise", "volume", "music"]
+    )
     init_means: List[float] | None = dataclasses.field(default=None)
-    sigma: float = 0.2
+    sigma: float = 0.25
     run_cma_update: bool = False
-    asr_threshold: float = 1.0
+    asr_threshold: float = 0.01
     # augmentation
     RIRs_dir: str | None = None
     background_sound_dir: str | None = None

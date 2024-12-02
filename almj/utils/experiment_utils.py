@@ -28,7 +28,7 @@ class ExperimentConfigBase:
 
     log_to_file: bool = True
     openai_fraction_rate_limit: float = 0.5
-    openai_num_threads: int = 50
+    openai_num_threads: int = 100
     gemini_num_threads: int = 100
     openai_s2s_num_threads: int = 40
     gpt4o_s2s_rpm_cap: int = 10

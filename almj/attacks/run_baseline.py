@@ -19,7 +19,7 @@ class ExperimentConfig(ExperimentConfigBase):
     modality: str
     n_samples: int = 128
     n_workers: int = 2
-    limit: int | None = None
+    request_ids: str | None = None  # pass a space separated list of ids to run on
     temperature: float = 1.0
 
 
@@ -29,8 +29,9 @@ async def main(cfg: ExperimentConfig):
 
     df = pd.read_json(cfg.dataset_path, lines=True)
 
-    if cfg.limit is not None:
-        df = df[: cfg.limit]
+    if cfg.request_ids is not None:
+        request_ids = cfg.request_ids.split(" ")
+        df = df.iloc[request_ids]
 
     kwargs = {}
     if cfg.modality == "text":

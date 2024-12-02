@@ -102,11 +102,10 @@ class JailbreakMetrics:
             if len(image_path.split("/")) == 0 or len(image_path.split(" ")) > 2:
                 text_in_image = image_path
                 hash_of_text = deterministic_hash(text_in_image)
-                image_path = (
-                    f"/mnt/jailbreak-defense/exp/johnh/almj/240909_image_shotgun_v1/default_images/{hash_of_text}.png"
-                )
+                image_path = f"exp/baselines/image/default_images/{hash_of_text}.png"
                 print(f"saving image to {image_path}")
                 if not Path(image_path).exists():
+                    Path(image_path).parent.mkdir(parents=True, exist_ok=True)
                     image = get_default_image(text_in_image)
                     save_image_from_array(image, image_path)
 
