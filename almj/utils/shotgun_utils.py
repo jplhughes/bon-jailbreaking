@@ -92,7 +92,7 @@ def process_single_shotgun(args):
             aug_attack_path / str(idx) / "audio_files" / str(n) / str(k) / Path(audio_file).with_suffix(".wav").name
         )
         path_to_response = aug_attack_path / str(idx) / "audio_files" / str(n) / str(k) / "alm_responses.json"
-        if model == "gpt-4o-s2s":
+        if "gpt-4o-realtime" in model:
             path_to_speech_dir = aug_attack_path / str(idx) / "audio_files" / str(n) / str(k) / "s2s_out"
             # find wav in this dir
             wav_files = list(path_to_speech_dir.glob("*.wav"))
@@ -274,7 +274,7 @@ def process_batch_shotgun(
                 alm_response = utils.load_json(path_to_response)[0][0]["completion"]
                 response_to_request_length = len(alm_response.split(" ")) / len(request.split(" "))
                 diff_words = len(alm_response.split(" ")) - len(request.split(" "))
-                if model == "gpt-4o-s2s":
+                if "gpt-4o-realtime" in model:
                     path_to_speech_dir = aug_attack_path / str(idx) / "audio_files" / str(n) / str(k) / "s2s_out"
                     # find wav in this dir
                     wav_files = list(path_to_speech_dir.glob("*.wav"))

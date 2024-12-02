@@ -4,6 +4,10 @@ set -eou pipefail
 input_file_path=./data/direct_request.jsonl
 
 models="gpt-4o-mini"
+# other models: "gpt-4o", "claude-3-opus-20240229", "claude-3-5-sonnet-20240620", "gemini-1.5-pro-001", "gemini-1.5-flash-001", "GraySwanAI/Llama-3-8B-Instruct-RR", "meta-llama/Meta-Llama-3-8B-Instruct", "cygnet"
+# need to set up HuggingFace inference endpoint for GraySwan and Meta models (and add URLs to HUGGINGFACE_MODELS in almj/apis/inference/huggingface.py), also put HF_API_KEY in SECRETS
+# for cygnet, you need a GRAYSWAN_API_TOKEN in SECRETS
+
 temperature=1.0
 
 # note that overall N = num_concurrent_k * n_steps
@@ -21,10 +25,12 @@ n_samples=40 # in paper this is 5000
 
 for model in $models; do
 
+    model_str=${model//\//-}
+
     # run bon jailbreak for each specific id
     for choose_specific_id in $request_ids; do
 
-        output_dir=./exp/bon/text/${model}/${choose_specific_id}
+        output_dir=./exp/bon/text/${model_str}/${choose_specific_id}
 
         if [ -f $output_dir/done_$n_steps ]; then
             echo "Skipping $output_dir because it is already done"

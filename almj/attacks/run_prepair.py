@@ -268,7 +268,7 @@ async def run_and_classify_single_prompt(
 ) -> tuple[str, ClassifierResult]:
     # Get model response
     audio_out_dir = None
-    if cfg.target_model == "gpt-4o-s2s":
+    if "gpt-4o-realtime" in cfg.target_model:
         audio_out_dir = cfg.output_dir / "audio_out"
         audio_out_dir.mkdir(parents=True, exist_ok=True)
     response = await cfg.api(

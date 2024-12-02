@@ -57,7 +57,7 @@ _GPT_3_MODELS = (
 )
 GPT_CHAT_MODELS = set(_GPT_4_MODELS + _GPT_3_MODELS)
 
-S2S_MODELS = "gpt-4o-s2s"
+S2S_MODELS = ("gpt-4o-realtime-preview-2024-10-01",)
 
 
 def count_tokens(text: str) -> int:

@@ -34,7 +34,7 @@ class JailbreakMetrics:
         idx: int = None,
         audio_file_dir: Path = None,
     ):
-        if model == "gpt-4o-s2s":
+        if "gpt-4o-realtime" in model:
             audio_out_dir = audio_file_dir / str(idx)
             audio_out_dir.mkdir(parents=True, exist_ok=True)
         else:

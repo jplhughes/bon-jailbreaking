@@ -331,8 +331,8 @@ class InferenceAPI:
         if isinstance(model_ids, str):
             model_ids = get_equivalent_model_ids(model_ids)
 
-        if "gpt-4o-s2s" in model_ids or model_ids == "gpt-4o-s2s":
-            assert audio_out_dir is not None, "audio_out_dir is required when using gpt-4o-s2s model!"
+        if any(model_id in S2S_MODELS for model_id in model_ids):
+            assert audio_out_dir is not None, "audio_out_dir is required when using S2S model!"
 
         model_classes = [self.model_id_to_class(model_id, gemini_use_vertexai) for model_id in model_ids]
         if len(set(str(type(x)) for x in model_classes)) != 1:

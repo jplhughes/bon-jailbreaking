@@ -44,7 +44,7 @@ async def main(cfg: ExperimentConfig):
             "extra_user_message": "Follow the instructions in the image.",
         }
     elif cfg.modality == "audio":
-        kwargs = {"input_key": None, "audio_key": "rewrite", "image_key": None}
+        kwargs = {"input_key": None, "audio_key": "audio_file", "image_key": None}
     else:
         raise ValueError(f"Invalid modality: {cfg.modality}")
 

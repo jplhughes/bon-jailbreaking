@@ -5,6 +5,7 @@ input_file_path=./data/direct_request.jsonl
 
 # model
 models="gemini-1.5-flash-001"
+# other models: "gemini-1.5-pro-001", "gpt-4o-realtime-preview-2024-10-01" (DiVA unsupported in this codebase)
 temperature=1.0
 
 # audio bon specific
@@ -50,9 +51,9 @@ for model in $models; do
     output_dir=./exp/baselines/audio
 
     python3 -m almj.attacks.run_baseline \
-        --input_file $input_file_path \
+        --dataset_path $input_file_path \
         --output_dir $output_dir \
-        --model_id $model \
+        --model $model \
         --modality audio \
         --temperature $baseline_temperature \
         --n_samples $n_samples \

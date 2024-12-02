@@ -4,6 +4,7 @@ set -eou pipefail
 input_file_path=./data/direct_request.jsonl
 
 models="gpt-4o-mini"
+# other models: "gpt-4o", "claude-3-opus-20240229", "claude-3-5-sonnet-20240620", "gemini-1.5-pro-001", "gemini-1.5-flash-001"
 temperature=1.0
 
 # note that overall N = num_concurrent_k * n_steps

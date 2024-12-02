@@ -270,7 +270,7 @@ async def get_alm_output(
     alm_max_tokens: int = 200,
 ) -> List[Dict]:
     input_obj = {"audio_file": audio_file}
-    if alm_model == "gpt-4o-s2s":
+    if "gpt-4o-realtime" in alm_model:
         audio_out_dir = Path(audio_file).parent / "s2s_out"
         audio_out_dir.mkdir(parents=True, exist_ok=True)
     else:
