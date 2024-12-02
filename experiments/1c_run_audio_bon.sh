@@ -22,6 +22,10 @@ request_ids="31 69 58 83 4 72 151 14 81 38" # This is a set of easy ids for quic
 baseline_temperature=1.0
 n_samples=40 # in paper this is 5000
 
+# NOTE: when running gemini please run the delete files script in parallel to avoid storage quota issues
+# python3 -m almj.apis.inference.gemini.run_delete_gemini_files
+
+
 for model in $models; do
 
     # run bon jailbreak for each specific id

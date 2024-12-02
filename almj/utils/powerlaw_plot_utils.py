@@ -1,21 +1,9 @@
 import numpy as np
 from matplotlib.colors import hsv_to_rgb, rgb_to_hsv, to_rgb
 
-from almj.utils.power_law import (
-    exp_decay_model,
-    exp_exp_decay_model,
-    exp_exp_poly_model,
-    exp_functional_form,
-    exp_poly_model,
-    exp_power_law,
-    exp_power_law_single_term_no_constant,
-    exp_power_law_two_terms,
-    exp_power_law_two_terms_plus_e,
-    functional_form,
-    power_law,
-    power_law_single_term_no_constant,
-    power_law_two_terms,
-    power_law_two_terms_plus_e,
+from almj.utils.power_law_simple import (
+    exp_power_law_no_constant,
+    power_law_no_constant,
 )
 
 
@@ -125,25 +113,6 @@ def plot_asr_trajectory(
     return scatter.get_facecolor()[0]
 
 
-def calculate_fitted_asr(steps, params, exponential, log_space_fit):
-    if len(params) == 2:
-        return power_law_single_term_no_constant(steps, *params)
-    elif len(params) == 3 and not exponential:
-        return power_law(steps, *params)
-    elif len(params) == 3 and exponential:
-        return exp_decay_model(steps, *params)
-    elif len(params) == 4 and not exponential:
-        return power_law_two_terms(steps, *params)
-    elif len(params) == 4 and exponential:
-        return functional_form(steps, *params)
-    elif len(params) == 5 and not exponential:
-        return power_law_two_terms_plus_e(steps, *params)
-    elif len(params) == 5 and exponential:
-        return exp_poly_model(steps, *params)
-    else:
-        raise ValueError(f"Unexpected number of params: {len(params)}")
-
-
 def plot_fitted_asr(
     ax,
     steps,
@@ -152,59 +121,14 @@ def plot_fitted_asr(
     log_scale_y=True,
     log_scale_x=True,
     exp_name="",
-    exponential=False,
-    log_space_fit=False,
     scale_factor=1,
-    extrapolate=False,
     linewidth=1,
     linestyle=None,
 ):
-    if len(params) == 2:
-        fitted_asr = (
-            power_law_single_term_no_constant(steps, *params)
-            if log_scale_y
-            else exp_power_law_single_term_no_constant(steps, *params)
-        )
-        linestyle = "--" if linestyle is None else linestyle
-        label = f"{exp_name}: fitted"
-    elif len(params) == 3 and not exponential:
-        fitted_asr = power_law(steps, *params) if log_scale_y else exp_power_law(steps, *params)
-        linestyle = "--" if linestyle is None else linestyle
-        label = f"{exp_name}: fitted"
-    elif len(params) == 3 and exponential:
-        fitted_asr = exp_decay_model(steps, *params) if log_scale_y else exp_exp_decay_model(steps, *params)
-        linestyle = ":" if linestyle is None else linestyle
-        label = f"{exp_name}: fitted"
-    elif len(params) == 4 and not exponential:
-        fitted_asr = power_law_two_terms(steps, *params) if log_scale_y else exp_power_law_two_terms(steps, *params)
-        linestyle = ":" if linestyle is None else linestyle
-        label = f"{exp_name}: fitted"
-    elif len(params) == 4 and exponential:
-        fitted_asr = functional_form(steps, *params) if log_scale_y else exp_functional_form(steps, *params)
-        linestyle = ":" if linestyle is None else linestyle
-        label = f"{exp_name}: fitted"
-    elif len(params) == 5 and not exponential:
-        fitted_asr = (
-            power_law_two_terms_plus_e(steps, *params)
-            if log_scale_y
-            else exp_power_law_two_terms_plus_e(steps, *params)
-        )
-        linestyle = "-." if linestyle is None else linestyle
-        label = f"{exp_name}: fitted"
-    elif len(params) == 5 and exponential:
-        fitted_asr = exp_poly_model(steps, *params) if log_scale_y else exp_exp_poly_model(steps, *params)
-        linestyle = "-." if linestyle is None else linestyle
-        label = f"{exp_name}: fitted"
-    else:
-        raise ValueError(f"Unexpected number of params: {len(params)}")
+    fitted_asr = power_law_no_constant(steps, *params) if log_scale_y else exp_power_law_no_constant(steps, *params)
+    linestyle = "--" if linestyle is None else linestyle
+    label = f"{exp_name}: fitted"
 
-    if extrapolate:
-        max_steps = max(steps)
-        while min(fitted_asr) > 0.01:  # Extrapolate until ASR reaches 1.0 (100%)
-            print(min(fitted_asr))
-            max_steps *= 2
-            steps = np.arange(1, max_steps + 1)
-            fitted_asr = calculate_fitted_asr(steps, params, exponential, log_space_fit)
     ax.plot(steps, fitted_asr * scale_factor, linestyle=linestyle, color=color, label=label, linewidth=linewidth)
 
     if log_scale_x:

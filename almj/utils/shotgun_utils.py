@@ -8,9 +8,9 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from almj.run.run_cma_search import EndOfStepResult as AudioEndOfStepResult
-from almj.run.run_image_shotgun import EndOfStepResult as ImageEndOfStepResult
-from almj.run.run_text_shotgun import EndOfStepResult as TextEndOfStepResult
+from almj.attacks.run_audio_bon import EndOfStepResult as AudioEndOfStepResult
+from almj.attacks.run_image_bon import EndOfStepResult as ImageEndOfStepResult
+from almj.attacks.run_text_bon import EndOfStepResult as TextEndOfStepResult
 from almj.utils import utils
 
 FALSE_POSITIVE_PHRASES = [
@@ -619,51 +619,19 @@ def generate_asr_trajectory(
     order_of_magnitude: int | None = None,
     bootstrap_type: str = "learn_p",
     prior_p: float | None = None,
-    num_behaviors: int = 159,
 ) -> np.ndarray:
     if seed is not None:
         np.random.seed(seed)
     if train_num_samples is not None:
         df = df[df["n"] < train_num_samples]
-    unique_ids = set(df["i"].unique())
-    missing_ids = set(range(num_behaviors)) - unique_ids
-    if len(unique_ids) < num_behaviors and seed in [0, None]:
-        print(f"Warning: number of behaviors is less than {num_behaviors}, got {len(unique_ids)}")
-        print(f"Missing behavior IDs: {sorted(missing_ids)}")
 
-    if bootstrap_type == "log_uniform_prior":
-        assert (
-            order_of_magnitude is not None
-        ), "order_of_magnitude must be provided for bootstrap_type='log_uniform_prior'"
-        # Find first flag for each behavior in training data
-        first_flag_steps = {}
-        for i in df["i"].unique():
-            if i < num_behaviors:
-                first_flag_steps[i] = df[df["i"] == i]["flagged"].mean()
-
-        # Set prior bounds based on training data
-        observed_probs = [1.0 / (step + 1) for step in first_flag_steps.values()]
-        if not observed_probs:
-            raise ValueError("No flags observed in training data")
-
-        censored_upper_bound = min(observed_probs)
-        upper_bound = max(observed_probs)
-        lower_bound = upper_bound * np.exp(-order_of_magnitude)
-
-        # Generate trajectories
-        success_trajectory = np.zeros((num_samples, num_behaviors))
-        for i in range(num_behaviors):
-            if i not in first_flag_steps:
-                # Censored: sample from truncated prior
-                log_p = np.random.uniform(np.log(lower_bound), np.log(censored_upper_bound), size=num_samples)
-                p = np.exp(log_p)
-            else:
-                # Uncensored: sample from proper posterior
-                p = sample_posterior(t=first_flag_steps[i] + 1, a=lower_bound, b=upper_bound, num_samples=num_samples)
-            p = np.clip(p, 0, 1)
-            success_trajectory[:, i] = np.random.binomial(1, p)
-
-    elif bootstrap_type == "learn_p":
+    if bootstrap_type == "learn_p":
+        num_behaviors = 159
+        unique_ids = set(df["i"].unique())
+        missing_ids = set(range(num_behaviors)) - unique_ids
+        if len(unique_ids) < num_behaviors and seed in [0, None]:
+            print(f"Warning: number of behaviors is less than {num_behaviors}, got {len(unique_ids)}")
+            print(f"Missing behavior IDs: {sorted(missing_ids)}")
         p_i = [0] * num_behaviors
         for i in df["i"].unique():
             if i < num_behaviors:
@@ -686,6 +654,7 @@ def generate_asr_trajectory(
             1, np.array([p_i[i] for i in range(num_behaviors)]), size=(num_samples, num_behaviors)
         )
     elif bootstrap_type == "sample_without_replacement":
+        num_behaviors = df["i"].nunique()
         if order_of_magnitude is not None or prior_p is not None:
             raise ValueError(
                 "order_of_magnitude and prior_p are not supported for bootstrap_type='sample_without_replacement'"
