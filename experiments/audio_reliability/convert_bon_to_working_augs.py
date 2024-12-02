@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from almj.utils.shotgun_utils import process_single_shotgun
+from bon.utils.shotgun_utils import process_single_shotgun
 
 
 def main(args):

@@ -29,7 +29,7 @@ for model in $models; do
             continue
         fi
 
-        python -m almj.attacks.run_image_bon \
+        python -m bon.attacks.run_image_bon \
             --input_file_path $input_file_path \
             --output_dir $output_dir \
             --enable_cache False \
@@ -43,7 +43,7 @@ for model in $models; do
     # run repeated sample baseline
     output_dir=./exp/baselines/image
 
-    python3 -m almj.attacks.run_baseline \
+    python3 -m bon.attacks.run_baseline \
         --dataset_path $input_file_path \
         --output_dir $output_dir \
         --model $model \

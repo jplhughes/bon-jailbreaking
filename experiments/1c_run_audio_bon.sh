@@ -23,7 +23,7 @@ baseline_temperature=1.0
 n_samples=40 # in paper this is 5000
 
 # NOTE: when running gemini please run the delete files script in parallel to avoid storage quota issues
-# python3 -m almj.apis.inference.gemini.run_delete_gemini_files
+# python3 -m bon.apis.inference.gemini.run_delete_gemini_files
 
 
 for model in $models; do
@@ -38,7 +38,7 @@ for model in $models; do
             continue
         fi
 
-        python -m almj.attacks.run_audio_bon \
+        python -m bon.attacks.run_audio_bon \
             --input_file_path $input_file_path \
             --output_dir $output_dir \
             --enable_cache False \
@@ -54,7 +54,7 @@ for model in $models; do
     # run repeated sample baseline
     output_dir=./exp/baselines/audio
 
-    python3 -m almj.attacks.run_baseline \
+    python3 -m bon.attacks.run_baseline \
         --dataset_path $input_file_path \
         --output_dir $output_dir \
         --model $model \

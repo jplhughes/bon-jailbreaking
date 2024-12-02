@@ -7,11 +7,11 @@ import numpy as np
 import pandas as pd
 from simple_parsing import ArgumentParser
 
-from almj.attacks.run_audio_bon import get_asr, get_augmentation_func
-from almj.data_prep.augmentation import SoxAugmentation
-from almj.utils.audio_utils import IntermediateAugmentation, WAVFile
-from almj.utils.experiment_utils import ExperimentConfigBase
-from almj.utils.shotgun_utils import process_single_shotgun
+from bon.attacks.run_audio_bon import get_asr, get_augmentation_func
+from bon.data_prep.augmentation import SoxAugmentation
+from bon.utils.audio_utils import IntermediateAugmentation, WAVFile
+from bon.utils.experiment_utils import ExperimentConfigBase
+from bon.utils.shotgun_utils import process_single_shotgun
 
 
 @dataclasses.dataclass

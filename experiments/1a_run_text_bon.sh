@@ -5,7 +5,7 @@ input_file_path=./data/direct_request.jsonl
 
 models="gpt-4o-mini"
 # other models: "gpt-4o", "claude-3-opus-20240229", "claude-3-5-sonnet-20240620", "gemini-1.5-pro-001", "gemini-1.5-flash-001", "GraySwanAI/Llama-3-8B-Instruct-RR", "meta-llama/Meta-Llama-3-8B-Instruct", "cygnet"
-# need to set up HuggingFace inference endpoint for GraySwan and Meta models (and add URLs to HUGGINGFACE_MODELS in almj/apis/inference/huggingface.py), also put HF_API_KEY in SECRETS
+# need to set up HuggingFace inference endpoint for GraySwan and Meta models (and add URLs to HUGGINGFACE_MODELS in bon/apis/inference/huggingface.py), also put HF_API_KEY in SECRETS
 # for cygnet, you need a GRAYSWAN_API_TOKEN in SECRETS
 
 temperature=1.0
@@ -37,7 +37,7 @@ for model in $models; do
             continue
         fi
 
-        python -m almj.attacks.run_text_bon \
+        python -m bon.attacks.run_text_bon \
             --input_file_path $input_file_path \
             --output_dir $output_dir \
             --enable_cache False \
@@ -52,7 +52,7 @@ for model in $models; do
     # run repeated sample baseline
     output_dir=./exp/baselines/text
 
-    python3 -m almj.attacks.run_baseline \
+    python3 -m bon.attacks.run_baseline \
         --dataset_path $input_file_path \
         --output_dir $output_dir \
         --model $model \

@@ -17,8 +17,8 @@ Or just run:
 ```
 2. Next, you need to run the following from the root of the repository:
     ```bash
-    micromamba env create -n almj python=3.11.7
-    micromamba activate almj
+    micromamba env create -n bon python=3.11.7
+    micromamba activate bon
     pip install -r requirements.txt
     pip install -e .
     (git clone git@github.com:facebookresearch/WavAugment.git && cd WavAugment && python setup.py develop)
@@ -37,6 +37,8 @@ OPENAI_ORG=<openai-org-id>
 GOOGLE_API_KEY=<your-key>
 GOOGLE_PROJECT_ID=<GCP-project-name>
 GOOGLE_PROJECT_REGION=<GCP-project-region>
+HF_API_KEY=<your-key> # required for Llama3 and Circuit Breaking
+GRAYSWAN_API_KEY=<your-key> # required for Cygnet
 ELEVENLABS_API_KEY=<your-key> # required for ElevenLabs TTS (used in PrePAIR)
 ```
 
@@ -45,7 +47,7 @@ ELEVENLABS_API_KEY=<your-key> # required for ElevenLabs TTS (used in PrePAIR)
 To replicate the experiments in the paper, run the scripts in the `experiments` directory. For example, to replicate Figure 1, run the following:
 
 ```bash
-./experiments/1_run_bon.sh
+./experiments/1_run_text_bon.sh
 ```
 
 ## Human data
