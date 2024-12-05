@@ -75,7 +75,7 @@
     <section class="row">
       <div class="col-md-8 col-md-offset-2 text-center">
         <h3>
-          <a href="https://drive.google.com/file/d/17c_DgejUgas9pXTpgoR3_18GEHc0vPPT/view?usp=sharing" target="_blank">Paper</a>
+          <a href="https://arxiv.org/abs/2412.03556" target="_blank">Paper</a>
           &nbsp;&nbsp;|&nbsp;&nbsp;
           <a href="https://github.com/McHughes288/bon_jailbreaking" target="_blank">Code</a>
           &nbsp;&nbsp;|&nbsp;&nbsp;
@@ -89,25 +89,7 @@
       <div class="col-md-8 col-md-offset-2">
         <h3>Abstract</h3>
         <p class="text-justify">
-          We introduce Best-of-N (BoN) Jailbreaking, a simple black-box algorithm that
-          jailbreaks frontier systems across modalities. BoN jailbreaking works by repeatedly
-          sampling variations of a prompt with a combination of augmentations—such as
-          randomly shuffling characters or adjusting capitalization for textual prompts—until
-          a harmful response is elicited. We find that BoN Jailbreaking achieves high attack
-          success rates (ASRs) on closed-source language models, such as 89% on GPT-4o
-          and 78% on Claude 3.5 Sonnet when sampling 10,000 augmented prompts. Further,
-          it is similarly effective at circumventing state-of-the-art open-source defenses like
-          circuit breakers. BoN also seamlessly extends to other modalities and jailbreaks
-          vision language models (VLMs) such as GPT-4o, and audio language models
-          (ALMs) like Gemini 1.5 Pro, using modality-specific augmentations. BoN reliably
-          improves when we sample more augmented prompts; across all modalities, ASR
-          (as a function of the number of samples N) empirically follows power-law-like
-          behavior for many orders of magnitude. BoN jailbreaking can also be composed with
-          other black-box algorithms for even more effective attacks—we find combining
-          BoN with an optimized prefix attack achieves between 12% and 53% relative
-          improvement in ASR. Overall, our work indicates that despite their capability,
-          language models are still sensitive to seemingly innocuous changes in inputs,
-          which can be exploited by attackers across modalities.
+          We introduce Best-of-N (BoN) Jailbreaking, a simple black-box algorithm that jailbreaks frontier AI systems across modalities. BoN Jailbreaking works by repeatedly sampling variations of a prompt with a combination of augmentations - such as random shuffling or capitalization for textual prompts - until a harmful response is elicited. We find that BoN Jailbreaking achieves high attack success rates (ASRs) on closed-source language models, such as 89% on GPT-4o and 78% on Claude 3.5 Sonnet when sampling 10,000 augmented prompts. Further, it is similarly effective at circumventing state-of-the-art open-source defenses like circuit breakers. BoN also seamlessly extends to other modalities: it jailbreaks vision language models (VLMs) such as GPT-4o and audio language models (ALMs) like Gemini 1.5 Pro, using modality-specific augmentations. BoN reliably improves when we sample more augmented prompts. Across all modalities, ASR, as a function of the number of samples (N), empirically follows power-law-like behavior for many orders of magnitude. BoN Jailbreaking can also be composed with other black-box algorithms for even more effective attacks - combining BoN with an optimized prefix attack achieves up to a 35% increase in ASR. Overall, our work indicates that, despite their capability, language models are sensitive to seemingly innocuous changes to inputs, which attackers can exploit across modalities.
         </p>
       </div>
     </section>
@@ -131,7 +113,7 @@
     <section id="widget-container" class="col-md-8 col-md-offset-2" style="padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;">
       <h3 class="text-center" style="margin-bottom: 20px; font-weight: 600;">Example Jailbreaks</h3>
       <p class="text-center" style="color: red; margin-bottom: 20px;">WARNING: EXAMPLES CONTAIN HARMFUL CONTENT</p>
-      
+
       <!-- Modality Tabs -->
       <ul class="nav nav-tabs nav-justified" style="margin-bottom: 20px;">
         <li class="active"><a href="#text" data-toggle="tab">Text</a></li>
@@ -174,10 +156,10 @@
         <h3>Citation</h3>
         <div class="form-group col-md-10 col-md-offset-1">
           <textarea id="bibtex" class="form-control" readonly>
-@article{hughes2024bon,
+@article{hughes2024bestofnjailbreaking,
   title={Best-of-N Jailbreaking},
   author={John Hughes and Sara Price and Aengus Lynch and Rylan Schaeffer and Fazl Barez and Sanmi Koyejo and Henry Sleight and Erik Jones and Ethan Perez and Mrinank Sharma},
-  journal={arXiv preprint arXiv:TBC},
+  journal={arXiv preprint arXiv:2412.03556},
   year={2024}
 }</textarea>
         </div>
