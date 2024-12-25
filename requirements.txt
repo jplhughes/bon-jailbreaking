@@ -2,112 +2,98 @@
 # We pin top-level dependencies only to make cross-platform development easier.
 
 # OpenAI
-openai==1.26.0
-tiktoken==0.6.0
+tiktoken==0.8.0
+openai==1.58.1
 
 # Anthropic
-anthropic==0.25.8
+anthropic==0.42.0
 grayswan-api==0.1.0a49
 
-# PyTorch
-# --extra-index-url https://download.pytorch.org/whl/cpu
-# torch==2.2.2+cpu
-# torchvision==0.17.2
-
 # HuggingFace
-datasets==2.19.0
-transformers==4.41.2
+datasets==3.2.0
+transformers==4.44.2
 transformers_stream_generator==0.0.5
-
-#accelerate
-accelerate==0.31.0
+accelerate==0.33.0
 
 # Streamlit
-streamlit==1.33.0
-streamlit-extras==0.4.2
+streamlit==1.41.1
+streamlit-extras==0.5.0
 
 # API helpers
-pydantic==2.7.0
-tenacity==8.2.3
+pydantic==2.10.4
+tenacity==8.5.0
 
 # Data processing
-datamodel-code-generator==0.25.5
-genson==1.2.2
+datamodel-code-generator==0.26.4
+genson==1.3.0
 jsonlines==4.0.0
-lark==1.1.9
+lark==1.2.2
 
 # Prompt engineering
-Jinja2==3.1.3
+Jinja2==3.1.4
 
 # Deep learning helpers
-einops==0.7.0
+einops==0.8.0
 einop==0.0.1
 
 # Computational libraries
-dask[dataframe]==2024.4.1
-pandas==2.2.2
-pyarrow==15.0.2
-scipy==1.13.0
-scikit-learn==1.4.2
-statsmodels==0.14.2
-umap-learn[plot]==0.5.6
+dask[dataframe]==2024.12.1
+pandas==2.2.3
+pyarrow==18.1.0
+scipy==1.14.1
+scikit-learn==1.6.0
+statsmodels==0.14.4
+umap-learn[plot]==0.5.7
 
-#Audio
-torchaudio==2.0.0
+# Audio
+torchaudio==2.5.1
 pydub==0.25.1
 audio-flamingo==0.0.3
-Python-IO==0.3
+Python-IO
 soundfile==0.12.1
-SpeechRecognition==3.10.4
-gradio==4.31.5
+SpeechRecognition==3.12.0
+gradio==5.9.1
+librosa==0.10.2.post1
+
+# Images
+opencv-python==4.10.0.84
 
 # Visualization libraries
-dash==2.16.1
-matplotlib==3.8.4
-plotly==5.21.0
+dash==2.18.2
+matplotlib==3.10.0
+plotly==5.24.1
 seaborn==0.13.2
 
 # Experiment management
-simple-parsing==0.1.5
-wandb==0.16.6
-
-# Runpod things
-# fabric==3.2.2
-# runpod==1.6.2
+simple-parsing==0.1.6
+wandb==0.19.1
 
 # Testing
-pytest==8.1.1
-pytest-asyncio==0.23.6  # for async tests
-pytest-xdist==3.5.0  # for parallel testing
+pytest==8.3.4
+pytest-asyncio==0.25.0
+pytest-xdist==3.6.1
 
 # Misc utilities
-termcolor==2.4.0
-tqdm==4.66.2
-ipykernel
+termcolor==2.5.0
+tqdm==4.66.5
+ipykernel==6.29.5
 
 # Formatting, Linting, and Typechecking
-pre-commit==3.7.0
-ruff==0.4.1  # If you upgrade this, also update the GitHub Actions workflow and the pre-commit config
+pre-commit
+ruff==0.8.3
 
 # Other utilities
 gpustat==1.1.1
-ipywidgets==8.1.2
-jupyterlab==4.1.6
-magic-wormhole==0.14.0
-
-# MARS-5
-torch
-torchaudio
-librosa
-vocos
-encodec
-huggingface_hub
+ipywidgets==8.1.5
+jupyterlab==4.3.4
+magic-wormhole==0.17.0
 
 # ELEVENLABS
-elevenlabs==1.3.1
+elevenlabs==1.50.3
 
 # Gemini
-google-cloud-aiplatform==1.57.0
+google-cloud-aiplatform==1.75.0
+google-generativeai==0.8.3
 
 # youtube
-yt-dlp==2024.04.09
+yt-dlp==2024.12.13

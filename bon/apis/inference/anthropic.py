@@ -119,10 +119,7 @@ class AnthropicChatModel(InferenceAPIModel):
         prompt: Prompt,
         max_tokens: int,
         **params,
-    ) -> anthropic.AsyncMessageStreamManager[anthropic.AsyncMessageStream]:
-        # TODO(tony): Can eventually wrap this in an async generator and keep
-        #             track of cost. Will need to do this in the parent API
-        #             class.
+    ) -> anthropic.AsyncMessageStreamManager:
         sys_prompt, chat_messages = prompt.anthropic_format()
         return self.aclient.messages.stream(
             model=model_id,
