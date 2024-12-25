@@ -7,6 +7,7 @@ tiktoken==0.6.0
 
 # Anthropic
 anthropic==0.25.8
+grayswan-api==0.1.0a49
 
 # PyTorch
 # --extra-index-url https://download.pytorch.org/whl/cpu
