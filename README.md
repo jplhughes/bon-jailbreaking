@@ -53,7 +53,7 @@ To replicate the experiments in the paper, run the scripts in the `experiments` 
 ## Human data
 
 We release our dataset of human verbalized jailbreaks from Harmbench. This inlcudes 308 PAIR, 307 TAP and 159 direct requests. These are on Google Drive:
-https://drive.google.com/drive/folders/15If3PVeu6qYOuYkKDJPm7rQi5P_FbmMm?usp=sharing0;98;36M0;98;36m
+https://drive.google.com/drive/folders/15If3PVeu6qYOuYkKDJPm7rQi5P_FbmMm?usp=sharingm
 
 Use pandas to open the jsonl file to see the jailbreak (located in "rewrite" column), audio files and other metadata such as the attack type.
 ```python
