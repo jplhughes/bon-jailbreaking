@@ -52,21 +52,13 @@ To replicate the experiments in the paper, run the scripts in the `experiments` 
 
 ## Human data
 
-We release our dataset of human verbalized jailbreaks from Harmbench. This inlcudes 308 PAIR, 307 TAP and 159 direct requests. These are in git LFS, so to download please run:
-```bash
-git lfs install
-git lfs pull
-```
-
-Then unzip the data:
-```bash
-unzip data/human_data.zip
-```
+We release our dataset of human verbalized jailbreaks from Harmbench. This inlcudes 308 PAIR, 307 TAP and 159 direct requests. These are on Google Drive:
+https://drive.google.com/drive/folders/15If3PVeu6qYOuYkKDJPm7rQi5P_FbmMm?usp=sharingm
 
 Use pandas to open the jsonl file to see the jailbreak (located in "rewrite" column), audio files and other metadata such as the attack type.
 ```python
 import pandas as pd
 
-df = pd.read_json('human_data/verbalized_requests.jsonl', lines=True)
+df = pd.read_json('bon_human_data/verbalized_requests.jsonl', lines=True)
 ```
 
